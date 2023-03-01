@@ -10,13 +10,19 @@ provider "libvirt" {
   uri = "qemu:///system"
 }
 
+
+
+
 resource "libvirt_domain" "fcos" {
-  name   = "fcos"
+  count = 3
+  #for_each = to_set(var.number)
+
+  name   = "fcos_${count.index + 1}"
   memory = 8000 # [MiB]
   vcpu   = 2 
 
   disk {
-    volume_id = libvirt_volume.fcos.id
+    volume_id = libvirt_volume.fcos[count.index].id
   }
 
   # TODO:
@@ -29,7 +35,8 @@ resource "libvirt_domain" "fcos" {
 }
 
 resource "libvirt_volume" "fcos" {
-  name   = "fcos.qcow2"
+  count  = 3  
+  name   = "fcos_${count.index + 1}.qcow2"
   format = "qcow2"
   size   = 107374182400  # [byte] = 100[GiB] (100 * 1024^3)
 }
