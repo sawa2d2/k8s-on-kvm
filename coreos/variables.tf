@@ -1,0 +1,1 @@
+variable coreos_image_uri {}
