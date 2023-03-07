@@ -1,15 +1,4 @@
 ##******** Network settings ********#
-#resource "libvirt_network" "openshift_network" {
-#  name   = "openshift_net"
-#  mode   = "nat"
-#  domain = "openshift.local"
-#  addresses = ["10.11.12.1/24"]
-#  #routes {
-#  #  cidr = "10.17.0.0/16"
-#  #  gateway = "10.18.0.2"
-#  #}
-#}
-
 resource "libvirt_network" "openshift_bridge" {
   name   = "openshift_bridge"
   mode   = "bridge"
@@ -17,114 +6,100 @@ resource "libvirt_network" "openshift_bridge" {
   #addresses = ["10.11.12.2/24"]
 }
 
+#******** Ignition settings ********#
+resource "libvirt_ignition" "ignition_bootstrap" {
+  name = "ignition_bootstrap.ign"
+  content = "ignition.ign"
+}
+
+resource "libvirt_ignition" "ignition_master" {
+  count = var.master.count
+  name = "ignition_master_${count.index + 1}.ign"
+  content = "ignition.ign"
+}
+
+resource "libvirt_ignition" "ignition_worker" {
+  count = var.worker.count
+  name = "ignition_worker_${count.index + 1}.ign"
+  content = "ignition.ign"
+}
+
 #******** Bootstrap ********#
 resource "libvirt_domain" "coreos_bootstrap" {
   name   = "coreos_bootstrap"
-  memory = 8000 #16000 # [MiB]
-  vcpu   = 4 
+  vcpu   = var.bootstrap.vcpu
+  memory = var.bootstrap.memory
   
   disk {
     volume_id = libvirt_volume.coreos_bootstrap_volume.id
   }
-
-#  network_interface {
-#    hostname = "bootstrap"
-#    network_id = libvirt_network.openshift_bridge.id
-#    addresses      = ["10.11.12.49"]
-#    mac            = "AA:BB:CC:11:22:22"
-#  }
+  coreos_ignition = libvirt_ignition.ignition_bootstrap.id
 
   network_interface {
-    network_id = libvirt_network.openshift_bridge.id
-    macvtap = "veth0"
-    mac = "52:54:00:11:22:49"
-    #bridge = "virbr0"
-    addresses      = ["10.11.12.49"]
+    macvtap   = "veth0"
+    mac       = "52:54:00:11:22:49"
+    bridge    = "virbr0"
+    addresses = ["10.11.12.49"]
   }
 }
 
 resource "libvirt_volume" "coreos_bootstrap_volume" {
   name   = "coreos_bootstrap.qcow2"
   format = "qcow2"
-  size   = 107374182400  # [byte] = 100[GiB] (100 * 1024^3)
+  base_volume_id = var.coreos_image_uri
+  size   = var.bootstrap.disk
 }
 
 #******** Control plane ********#
 resource "libvirt_domain" "coreos_control" {
-  count = 3
-  #for_each = to_set(var.number)
-
+  count  = var.master.count
   name   = "coreos_control_${count.index + 1}"
-  memory = 8000 #16000 # [MiB]
-  vcpu   = 4 
-  
-  # TODO:
-  # Enable shared memory
-  #
-  #memorybacking {
-  #  access   = "shared"
-  #  allocation = 8192
-  #}
+  memory = var.master.memory
+  vcpu   = var.master.vcpu
 
   disk {
     volume_id = libvirt_volume.coreos_control_volume[count.index].id
   }
+  coreos_ignition = libvirt_ignition.ignition_master[count.index].id
 
   network_interface {
     network_id = libvirt_network.openshift_bridge.id
-    hostname = "master_${count.index + 1}"
-  }
-
-  network_interface {
-    network_name = libvirt_network.openshift_bridge.name
-    bridge = "virbr0"
-    macvtap = "veth0"
-    addresses      = ["10.11.12.6${count.index + 1}"]
-    mac = "52:54:00:11:22:7${count.index + 1}"
+    hostname   = "master_${count.index + 1}"
   }
 }
 
 resource "libvirt_volume" "coreos_control_volume" {
-  count  = 3  
+  count  = var.master.count
   name   = "coreos_control_${count.index + 1}.qcow2"
   format = "qcow2"
-  size   = 107374182400  # [byte] = 100[GiB] (100 * 1024^3)
+  base_volume_id = var.coreos_image_uri
+  size   = var.master.disk
 }
 
 #******** Compute plane ********#
 resource "libvirt_domain" "coreos_compute" {
-  count = 2 
-  #for_each = to_set(var.number)
-
+  count = var.worker.count
   name   = "coreos_compute_${count.index + 1}"
-  memory = 8000 # [MiB]
-  vcpu   = 2 
+  memory = var.worker.memory
+  vcpu   = var.worker.vcpu
 
   disk {
     volume_id = libvirt_volume.coreos_compute_volume[count.index].id
   }
+  coreos_ignition = libvirt_ignition.ignition_worker[count.index].id
 
   network_interface {
     network_id = libvirt_network.openshift_bridge.id
-    hostname = "worker_${count.index + 1}"
-    addresses      = ["10.11.12.7${count.index + 1}"]
-    mac = "52:54:00:11:22:7${count.index + 1}"
+    hostname   = "worker_${count.index + 1}"
+    addresses  = ["10.11.12.7${count.index + 1}"]
+    mac        = "52:54:00:11:22:7${count.index + 1}"
   }
-
-  network_interface {
-    bridge = "virbr0"
-    macvtap = "veth0"
-    network_id = libvirt_network.openshift_bridge.id
-  }
-
-  #network_interface {
-  #  network_id = libvirt_network.openshift_bridge.id
-  #}
 }
 
 resource "libvirt_volume" "coreos_compute_volume" {
-  count  = 2  
+  count  = var.worker.count
   name   = "coreos_compute_${count.index + 1}.qcow2"
   format = "qcow2"
-  size   = 107374182400  # [byte] = 100[GiB] (100 * 1024^3)
+  base_volume_id = var.coreos_image_uri
+  size   = var.worker.disk
 }

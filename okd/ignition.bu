@@ -1,0 +1,24 @@
+variant: fcos
+version: 1.1.0
+passwd:
+  users:
+    - name: core
+      ssh_authorized_keys:
+        - SSH_KEY
+
+# Network configuration
+# Reference:
+#    https://docs.fedoraproject.org/en-US/fedora-coreos/sysconfig-network-configuration/#_configuring_a_static_ip
+storage:
+  files:
+    - path: /etc/NetworkManager/system-connections/enp2s0.nmconnection
+      mode: 0600
+      contents:
+        inline: |
+          [connection]
+          id=enp2s0
+          type=ethernet
+          interface-name=enp2s0
+          [ipv4]
+          address1=192.168.0.50/24
+          method=manual
