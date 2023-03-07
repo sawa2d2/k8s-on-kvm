@@ -2,10 +2,10 @@
 resource "libvirt_network" "okd_network" {
   name = "okd_network"
   mode = "nat"
-  addresses = ["192.168.1.1/24"]
+  addresses = [var.okd_network.cidr]
   routes {
-      cidr = "192.168.1.0/24"
-      gateway = "192.168.1.1"
+      cidr = var.okd_network.cidr
+      gateway = var.okd_network.router_ip
     }
   dhcp {
     enabled = false
