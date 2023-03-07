@@ -1,12 +1,18 @@
 ##******** Network settings ********#
-resource "libvirt_network" "openshift_bridge" {
-  name   = "openshift_bridge"
-  mode   = "bridge"
-  bridge = "virbr0"
-  #addresses = ["10.11.12.2/24"]
+resource "libvirt_network" "okd_network" {
+  name = "okd_network"
+  mode = "nat"
+  addresses = ["192.168.1.1/24"]
+  routes {
+      cidr = "192.168.1.0/24"
+      gateway = "192.168.1.1"
+    }
+  dhcp {
+    enabled = false
+  }
 }
 
-#******** Ignition settings ********#
+#******** Ignition settings *******#
 resource "libvirt_ignition" "ignition_bootstrap" {
   name = "ignition_bootstrap.ign"
   content = "ignition.ign"
@@ -34,12 +40,18 @@ resource "libvirt_domain" "coreos_bootstrap" {
     volume_id = libvirt_volume.coreos_bootstrap_volume.id
   }
   coreos_ignition = libvirt_ignition.ignition_bootstrap.id
+  autostart = true
 
   network_interface {
-    macvtap   = "veth0"
-    mac       = "52:54:00:11:22:49"
-    bridge    = "virbr0"
-    addresses = ["10.11.12.49"]
+    network_name = "default"
+  }
+
+  network_interface {
+    network_id = libvirt_network.okd_network.id
+    hostname   = "bootstrap"
+    addresses  = ["192.168.1.200"]
+    macvtap = "enp2s0"
+    wait_for_lease = true
   }
 }
 
@@ -61,10 +73,14 @@ resource "libvirt_domain" "coreos_control" {
     volume_id = libvirt_volume.coreos_control_volume[count.index].id
   }
   coreos_ignition = libvirt_ignition.ignition_master[count.index].id
+  autostart = true
 
   network_interface {
-    network_id = libvirt_network.openshift_bridge.id
+    network_id = libvirt_network.okd_network.id
     hostname   = "master_${count.index + 1}"
+    addresses  = ["192.168.1.${200 + count.index + 1}"]
+    macvtap = "enp2s0"
+    wait_for_lease = true
   }
 }
 
@@ -87,12 +103,14 @@ resource "libvirt_domain" "coreos_compute" {
     volume_id = libvirt_volume.coreos_compute_volume[count.index].id
   }
   coreos_ignition = libvirt_ignition.ignition_worker[count.index].id
+  autostart = true
 
   network_interface {
-    network_id = libvirt_network.openshift_bridge.id
+    network_id = libvirt_network.okd_network.id
     hostname   = "worker_${count.index + 1}"
-    addresses  = ["10.11.12.7${count.index + 1}"]
-    mac        = "52:54:00:11:22:7${count.index + 1}"
+    addresses  = ["192.168.1.${200 + count.index + 4}"]
+    macvtap = "enp2s0"
+    wait_for_lease = true
   }
 }
 
