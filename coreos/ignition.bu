@@ -4,4 +4,4 @@ passwd:
   users:
     - name: core
       ssh_authorized_keys:
-        - <SSH_KEY>
+        - "<SSH_KEY>"
