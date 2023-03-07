@@ -44,6 +44,7 @@ resource "libvirt_domain" "coreos_bootstrap" {
 
   network_interface {
     network_name = "default"
+    macvtap = "enp2s1"
   }
 
   network_interface {
