@@ -1,6 +1,12 @@
 # Provisioning OKD cluster
 
-## Provisioning
+## Network architecture
+![Network architecture](./images/network_architecture.drawio.png)
+
+## Prerequisite
+- Terraform
+
+## Provisioning VMs
 
 Convert by running Butane:
 ```
@@ -23,10 +29,10 @@ coreos_control_1:
  vnet437    52:54:00:ea:70:b6    ipv4         192.168.1.201/24
 coreos_control_2:
  vnet433    52:54:00:82:71:c0    ipv4         192.168.1.202/24
+coreos_control_3:
+ vnet436    52:54:00:6a:8c:31    ipv4         192.168.1.203/24
 coreos_compute_1:
  vnet435    52:54:00:ca:90:4a    ipv4         192.168.1.204/24
 coreos_compute_2:
  vnet434    52:54:00:9e:e8:92    ipv4         192.168.1.205/24
-coreos_control_3:
- vnet436    52:54:00:6a:8c:31    ipv4         192.168.1.203/24
 ```
