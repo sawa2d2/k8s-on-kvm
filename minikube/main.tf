@@ -11,7 +11,6 @@ provider "libvirt" {
   uri = "qemu:///system"
 }
 
-
 variable coreos_image_uri {
     #source: "https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/37.20230205.3.0/x86_64/fedora-coreos-37.20230205.3.0-qemu.x86_64.qcow2.xz"
     default = "/var/lib/libvirt/images/fedora-coreos-37.20230205.3.0-qemu.x86_64.qcow2"
@@ -22,12 +21,12 @@ resource "libvirt_ignition" "ignition" {
   content = "${path.module}/ignition.ign"
 }
 
-resource "libvirt_domain" "coreos" {
-  name = "coreos"
-  memory = 4000  # in MiB
+resource "libvirt_domain" "minikube" {
+  name = "minikube"
+  memory = 2000  # in MiB
   vcpu = 2
   disk {
-    volume_id = libvirt_volume.coreos_volume.id
+    volume_id = libvirt_volume.coreos_minikube_volume.id
   }
   coreos_ignition = libvirt_ignition.ignition.id
 
@@ -37,8 +36,8 @@ resource "libvirt_domain" "coreos" {
   }
 }
 
-resource "libvirt_volume" "coreos_volume" {
-  name = "coreos.qcow2"
+resource "libvirt_volume" "coreos_minikube_volume" {
+  name = "coreos_minikube.qcow2"
   pool = "default" 
   format = "qcow2"
   base_volume_id = var.coreos_image_uri

@@ -23,22 +23,22 @@ $ terraform apply
 Check a VM is created:
 ```
 $ virsh list --all
- Id    Name               State
------------------------------------
- 233   coreos             running
+   Id    Name       State
+---------------------------
+ 418   minikube   running
 ```
 
 Check the VM's IP address:
 ```
-$ virsh domifaddr coreos
- Name       MAC address          Protocol     Address
+$ virsh domifaddr minikube
+  Name       MAC address          Protocol     Address
 -------------------------------------------------------------------------------
- vnet250    52:54:00:c6:ae:49    ipv4         192.168.122.142/24
+ vnet512    52:54:00:8e:8f:dd    ipv4         192.168.122.204/24
 ```
 
 Login the VM via SSH as user `core`:
 ```
-$ ssh core@192.168.122.142
+$ ssh core@192.168.122.204
 [core@localhost ~]$ 
 ```
 
