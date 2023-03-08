@@ -9,10 +9,16 @@ passwd:
 
 # Docs of ignition storage.files: https://coreos.github.io/butane/examples/#storage-and-files
 storage:
-  # Docs of minikube: https://minikube.sigs.k8s.io/docs/start/
   files:
+    # minikube: https://minikube.sigs.k8s.io/docs/start/
     - path: /usr/local/bin/minikube
       overwrite: true
       mode: 0755
       contents:
         source: https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+    # kubectl: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
+    - path: /usr/local/bin/kubectl
+      overwrite: true
+      mode: 0755
+      contents:
+        source: https://dl.k8s.io/release/v1.26.2/bin/linux/amd64/kubectl
