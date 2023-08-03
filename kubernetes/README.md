@@ -1,38 +1,60 @@
-# Provisioning OKD cluster
+# How to create kubernetes cluster on KVM with terraform + kubespray
+
+This is a sample code of this article [Terraform + kubespray で KVM 上に Kubernetes クラスタを構築 - Qiita](https://qiita.com/sawa2d2/items/c592dcbd958f69441068).
 
 ## Network architecture
 ![Network architecture](./images/network_architecture.drawio.png)
 
 ## Prerequisite
 - Terraform
+- podman
+- KVM Packages
+  - qemu-kvm
+  - libvirt-clients
+  - libvirt-daemon
+  - bridge-utils
+  - virt-manager
 
-## Provisioning VMs
+## Setup
 
-Convert by running Butane:
+Clone this repo:
 ```
-podman run -i --rm quay.io/coreos/butane:release --pretty --strict < ignition.bu > ignition.ign
-```
-
-To create a VM, run:
-```
-terraform init
-terraform apply
+$ git clone https://github.com/sawa2d2/k8s-on-kvm.git
+$ cd k8s-on-kvm/kubernetes
 ```
 
-Check the IP addresses of each node.
+Download a qcow2 image file of Rocky Linux 8.8 to the default pool of livbirt `/var/lib/libvirt/images/`:
+
 ```
-$ virsh list --all | awk '{print $2}' | tail -n +3 | xargs -i sh -c "echo {}: && virsh domifaddr {} | tail -n +3 | head -n -1"
-coreos_bootstrap:
- vnet431    52:54:00:0e:3a:b1    ipv4         192.168.122.174/24
- vnet432    52:54:00:6a:d2:bd    ipv4         192.168.1.200/24
-coreos_control_1:
- vnet437    52:54:00:ea:70:b6    ipv4         192.168.1.201/24
-coreos_control_2:
- vnet433    52:54:00:82:71:c0    ipv4         192.168.1.202/24
-coreos_control_3:
- vnet436    52:54:00:6a:8c:31    ipv4         192.168.1.203/24
-coreos_compute_1:
- vnet435    52:54:00:ca:90:4a    ipv4         192.168.1.204/24
-coreos_compute_2:
- vnet434    52:54:00:9e:e8:92    ipv4         192.168.1.205/24
+$ sudo curl -L -o /var/lib/libvirt/images/Rocky-9-GenericCloud.latest.x86_64.qcow2 https://download.rockylinux.org/pub/rocky/8.8/images/x86_64/Rocky-8-GenericCloud.latest.x86_64.qcow2
+```
+
+Edit `cloud_init.cfg` to set your ssh public key:
+```
+#cloud-config
+users:
+  - name: root
+    ssh-authorized-keys:
+      - "<YOUR_SSH_KEY>"
+...
+```
+
+To create a VMs, run:
+```
+$ terraform init
+$ terraform apply
+```
+
+To create a cluster, run:
+```
+$ podman pull quay.io/kubespray/kubespray:v2.22.1
+$ podman run --rm -it \
+  --mount type=bind,source="$(pwd)"/inventory,dst=/inventory \
+  --mount type=bind,source="${HOME}"/.ssh/id_ed25519,dst=/root/.ssh/id_ed25519 \
+  quay.io/kubespray/kubespray:v2.22.1 bash
+```
+
+Inside the container run:
+```
+$ ansible-playbook -i /inventory/hosts.yaml --private-key /root/.ssh/id_ed25519 cluster.yml
 ```
