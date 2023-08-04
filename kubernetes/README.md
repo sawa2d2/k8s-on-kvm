@@ -39,12 +39,13 @@ users:
 ...
 ```
 
-To create a VMs, run:
+## Provisioning VMs
 ```
-$ terraform init
-$ terraform apply
+$ ./destroy.sh
+$ ./provision.sh
 ```
 
+## Creating a k8s Cluster
 To create a cluster, run:
 ```
 $ podman pull quay.io/kubespray/kubespray:v2.22.1
