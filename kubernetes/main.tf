@@ -13,28 +13,29 @@ provider "libvirt" {
 
 #******** Network settings ********#
 resource "libvirt_network" "k8s_network" {
-  name = "k8s_network"
-  mode = "nat"
-  addresses = [var.k8s_network.cidr]
-  routes {
-      cidr = var.k8s_network.cidr
-      gateway = var.k8s_network.router_ip
-    }
-  dhcp {
-    enabled = false
-  }
+  name = "k8snet"
+  mode = "bridge"
+  bridge = "br0"
+  autostart = true
 }
 
 data "template_file" "user_data" {
   template = file("${path.module}/cloud_init.cfg")
 }
 
-resource "libvirt_cloudinit_disk" "commoninit" {
-  name      = "commoninit.iso"
-  user_data = data.template_file.user_data.rendered
+#******** Master nodes ********#
+data "template_file" "network_config_master" {
+  count  = var.master.count
+  template = file("${path.module}/network_config_k8s_master_${count.index + 1}.cfg")
 }
 
-#******** Master nodes ********#
+resource "libvirt_cloudinit_disk" "commoninit_master" {
+  count  = var.master.count
+  name           = "commoninit_master_${count.index + 1}.iso"
+  user_data      = data.template_file.user_data.rendered
+  network_config = data.template_file.network_config_master[count.index].rendered
+}
+
 resource "libvirt_domain" "k8s_master" {
   count  = var.master.count
   name   = "k8s_master_${count.index + 1}"
@@ -44,14 +45,14 @@ resource "libvirt_domain" "k8s_master" {
   disk {
     volume_id = libvirt_volume.k8s_master_volume[count.index].id
   }
-  cloudinit = libvirt_cloudinit_disk.commoninit.id
+  cloudinit = libvirt_cloudinit_disk.commoninit_master[count.index].id
   autostart = true
 
   network_interface {
     network_id = libvirt_network.k8s_network.id
     hostname   = "master_${count.index + 1}"
     addresses  = ["192.168.1.${200 + count.index + 1}"]
-    macvtap = "enp2s0"
+    mac  = "52:54:00:00:00:0${count.index + 1}"
     wait_for_lease = true
   }
 
@@ -71,6 +72,18 @@ resource "libvirt_volume" "k8s_master_volume" {
 }
 
 #******** Worker nodes ********#
+data "template_file" "network_config_worker" {
+  count  = var.worker.count
+  template = file("${path.module}/network_config_k8s_worker_${count.index + 1}.cfg")
+}
+
+resource "libvirt_cloudinit_disk" "commoninit_worker" {
+  count  = var.worker.count
+  name           = "commoninit_worker_${count.index + 1}.iso"
+  user_data      = data.template_file.user_data.rendered
+  network_config = data.template_file.network_config_worker[count.index].rendered
+}
+
 resource "libvirt_domain" "k8s_worker" {
   count  = var.worker.count
   name   = "k8s_worker_${count.index + 1}"
@@ -80,14 +93,14 @@ resource "libvirt_domain" "k8s_worker" {
   disk {
     volume_id = libvirt_volume.k8s_worker_volume[count.index].id
   }
-  cloudinit = libvirt_cloudinit_disk.commoninit.id
+  cloudinit = libvirt_cloudinit_disk.commoninit_worker[count.index].id
   autostart = true
 
   network_interface {
     network_id = libvirt_network.k8s_network.id
     hostname   = "worker_${count.index + 1}"
     addresses  = ["192.168.1.${200 + count.index + 3}"]
-    macvtap = "enp2s0"
+    mac  = "52:54:00:00:00:0${count.index + 3}"
     wait_for_lease = true
   }
 

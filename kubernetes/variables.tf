@@ -4,17 +4,6 @@ variable "rocky_image_uri" {
     default = "/var/lib/libvirt/images/Rocky-9-GenericCloud.latest.x86_64.qcow2"
 }
 
-variable "k8s_network" {
-    type = object({
-        router_ip = string
-        cidr      = string
-    })
-    default = {
-        cidr      = "192.168.1.0/24"
-        router_ip = "192.168.1.1"
-    }
-}
-
 variable "master" {
     type = object({
         count   = number

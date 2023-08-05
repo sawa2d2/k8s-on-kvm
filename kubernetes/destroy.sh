@@ -27,7 +27,7 @@ done
 
 # Remove networks
 nw_list=( \
-    "k8s_network" \
+    "k8snet" \
 )
 for nw in "${nw_list[@]}"; do
     virsh net-destroy $nw
@@ -36,7 +36,10 @@ done
 
 # Remove images from the default pool
 image_list=( \
-    "/var/lib/libvirt/images/commoninit.iso" \
+    "/var/lib/libvirt/images/commoninit_master_1.iso" \
+    "/var/lib/libvirt/images/commoninit_master_2.iso" \
+    "/var/lib/libvirt/images/commoninit_worker_1.iso" \
+    "/var/lib/libvirt/images/commoninit_worker_2.iso" \
     "/var/lib/libvirt/images/k8s_master_1.qcow2" \
     "/var/lib/libvirt/images/k8s_master_2.qcow2" \
     "/var/lib/libvirt/images/k8s_worker_1.qcow2" \
