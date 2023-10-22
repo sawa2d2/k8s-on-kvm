@@ -23,7 +23,6 @@ def main():
     hosts = get_hosts()
     for host in hosts:
         inventory['_meta']['hostvars'][host['name']] = {
-            "ansible_ssh_host": host['ip'],
             "ansible_host": host['ip'],
             "ip": host['ip'],
             "access_ip": host['ip'],

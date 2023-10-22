@@ -80,7 +80,7 @@ $ podman run --rm -it \
 
 Inside the container run:
 ```
-$ ansible-playbook -i ./generate_inventory.py --private-key /root/.ssh/id_ed25519 cluster.yml
+$ ansible-playbook -i ./generate_inventory.py cluster.yml
 ```
 
 ### Using static inventory
@@ -92,5 +92,5 @@ $ podman run --rm -it \
 ```
 ```
 $ ./generate_hosts_yaml.py > ./inventory/hosts.yaml
-$ ansible-playbook -i /inventory/hosts.yaml --private-key /root/.ssh/id_ed25519 cluster.yml
+$ ansible-playbook -i /inventory/hosts.yaml cluster.yml
 ```
