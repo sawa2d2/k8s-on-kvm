@@ -23,6 +23,11 @@ $ git clone https://github.com/sawa2d2/k8s-on-kvm.git
 $ cd k8s-on-kvm/kubernetes
 ```
 
+Create virtual bridge `br0`:
+```
+$ ./create_br0.sh
+```
+
 Download a qcow2 image file of Rocky Linux 8.8 to the default pool of livbirt `/var/lib/libvirt/images/`:
 
 ```
@@ -46,16 +51,35 @@ $ ./provision.sh
 ```
 
 ## Creating a k8s Cluster
-To create a cluster, run:
+
+Pull the container image in advance:
 ```
 $ podman pull quay.io/kubespray/kubespray:v2.22.1
+```
+
+### Using dynamic inventory
+```
 $ podman run --rm -it \
   --mount type=bind,source="$(pwd)"/inventory,dst=/inventory \
+  --mount type=bind,source="$(pwd)"/generate_inventory.py,dst=/kubespray/generate_inventory.py \
+  --mount type=bind,source="$(pwd)"/terraform.tfstate,dst=/kubespray/terraform.tfstate \
   --mount type=bind,source="${HOME}"/.ssh/id_ed25519,dst=/root/.ssh/id_ed25519 \
   quay.io/kubespray/kubespray:v2.22.1 bash
 ```
 
 Inside the container run:
 ```
+$ ansible-playbook -i ./generate_inventory.py --private-key /root/.ssh/id_ed25519 cluster.yml
+```
+
+### Using static inventory
+```
+$ podman run --rm -it \
+  --mount type=bind,source="$(pwd)"/inventory,dst=/inventory \
+  --mount type=bind,source="${HOME}"/.ssh/id_ed25519,dst=/root/.ssh/id_ed25519 \
+  quay.io/kubespray/kubespray:v2.22.1 bash
+```
+```
+$ ./generate_hosts_yaml.py > ./inventory/hosts.yaml
 $ ansible-playbook -i /inventory/hosts.yaml --private-key /root/.ssh/id_ed25519 cluster.yml
 ```

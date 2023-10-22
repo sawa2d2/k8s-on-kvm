@@ -18,19 +18,12 @@ version: 2
 ethernets:
   eth0:
     dhcp4: no
-    addresses: [192.168.1.20$(($i+1))/24]
-    gateway4: 192.168.0.1
+    addresses: [192.168.8.20$(($i+1))/24]
+    gateway4: 192.168.8.1
     nameservers:
-      addresses: [8.8.8.8, 8.8.4.4]
+      addresses: [192.168.8.1]
 EOF
 done
-
-# Create a bridge br0
-sudo brctl addbr br0
-sudo ip link set up dev br0
-sudo ip addr add dev br0 192.168.1.1/24
-sudo brctl addif br0 enp1s0
-brctl show
 
 # Provision VMs
 terraform init
@@ -39,10 +32,10 @@ sleep 30
 
 # Check if enable to login via ssh
 ip_list=( \
-    "192.168.1.201" \
-    "192.168.1.202" \
-    "192.168.1.203" \
-    "192.168.1.204" \
+    "192.168.8.201" \
+    "192.168.8.202" \
+    "192.168.8.203" \
+    "192.168.8.204" \
 )
 for ip in "${ip_list[@]}"; do
     echo "Connecting $ip ..."

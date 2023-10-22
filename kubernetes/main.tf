@@ -12,7 +12,7 @@ provider "libvirt" {
 }
 
 #******** Network settings ********#
-resource "libvirt_network" "k8s_network" {
+resource "libvirt_network" "k8snet" {
   name = "k8snet"
   mode = "bridge"
   bridge = "br0"
@@ -49,9 +49,9 @@ resource "libvirt_domain" "k8s_master" {
   autostart = true
 
   network_interface {
-    network_id = libvirt_network.k8s_network.id
+    network_id = libvirt_network.k8snet.id
     hostname   = "master_${count.index + 1}"
-    addresses  = ["192.168.1.${200 + count.index + 1}"]
+    addresses  = ["192.168.8.${200 + count.index + 1}"]
     mac  = "52:54:00:00:00:0${count.index + 1}"
     wait_for_lease = true
   }
@@ -97,9 +97,9 @@ resource "libvirt_domain" "k8s_worker" {
   autostart = true
 
   network_interface {
-    network_id = libvirt_network.k8s_network.id
+    network_id = libvirt_network.k8snet.id
     hostname   = "worker_${count.index + 1}"
-    addresses  = ["192.168.1.${200 + count.index + 3}"]
+    addresses  = ["192.168.8.${200 + count.index + 3}"]
     mac  = "52:54:00:00:00:0${count.index + 3}"
     wait_for_lease = true
   }
