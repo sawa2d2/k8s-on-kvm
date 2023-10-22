@@ -1,8 +1,19 @@
 # How to create kubernetes cluster on KVM with terraform + kubespray
 
-This is a sample code of this article [Terraform + kubespray で KVM 上に Kubernetes クラスタを構築 - Qiita](https://qiita.com/sawa2d2/items/c592dcbd958f69441068).
+Here is a sample code of this article [Terraform + kubespray で KVM 上に Kubernetes クラスタを構築 - Qiita](https://qiita.com/sawa2d2/items/c592dcbd958f69441068).
 
 ## Network architecture
+
+Here I will explain how to build a Kubernetes cluster on KVM using Terraform + Kubespray according to the general steps:
+
+1. Create VMs using Terraform.
+1. From the generated `terraform.tfstate` in step 1., extract inventory information using a script (Dynamic Inventory).
+1. Give the inventory information from step 2. and Kubespray's playbooks to Ansible to create a Kubernetes cluster.
+
+![dynamic_inventory](./images/dynamic_inventory.drawio.png)
+
+The VM configuration in this repository is as shown in the diagram below:
+
 ![Network architecture](./images/network_architecture.drawio.png)
 
 ## Prerequisite
