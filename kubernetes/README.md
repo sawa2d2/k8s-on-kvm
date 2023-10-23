@@ -57,7 +57,7 @@ users:
 
 ## Provisioning VMs
 ```
-$ ./destroy.sh
+$ terraform destroy -auto-approve -var-file="variables.tfvars"
 $ ./provision.sh
 ```
 
