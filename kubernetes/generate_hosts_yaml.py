@@ -41,8 +41,8 @@ def main():
         }
 
     # Set .all.children
-    master_name_set = [host['name'] for host in hosts if "k8s_master" in host['name']]
-    worker_name_set = [host['name'] for host in hosts if "k8s_worker" in host['name']]
+    master_name_set = [host['name'] for host in hosts if "k8s.master" in host['name']]
+    worker_name_set = [host['name'] for host in hosts if "k8s.worker" in host['name']]
 
     control_plane = master_name_set
     inventory['all']['children']['kube_control_plane']['hosts'] = control_plane
@@ -67,58 +67,24 @@ def main():
             print(line)
 
 
-def debug():
-    tfstate = load_tfstate()
-    for resource in tfstate['resources']:
-        if (
-            resource['type'] == 'template_file'
-            and resource['name'] == "network_config_master"
-        ):
-            print("attributes.rendered")
-            for instance in resource['instances']:
-                yml = yaml.load(instance['attributes']['rendered'], Loader=yaml.SafeLoader)
-                print(yml)
-
-        if (
-            resource['type'] == 'libvirt_cloudinit_disk'
-            and resource['name'] == "commoninit_master"
-        ):
-            print("attributes.network_config")
-            for instance in resource['instances']:
-                yml = yaml.load(instance['attributes']['network_config'], Loader=yaml.SafeLoader)
-                print(yml)
-
-
 def load_tfstate():
     tfstate_path = './terraform.tfstate'
     with open(tfstate_path) as f:
         return json.load(f)
 
 
-def extract_ips(tfstate, resource_name):
-    ips = []
-    for resource in tfstate['resources']:
-        if (
-            resource['type'] == 'template_file'
-            and resource['name'] == resource_name
-        ):
-            for instance in resource['instances']:
-                yml = yaml.load(instance['attributes']['rendered'], Loader=yaml.SafeLoader)
-                ip_addr = yml['ethernets']['eth0']['addresses'][0].split('/')[0]
-                ips.append(ip_addr)
-    return ips
-
-
 def get_hosts():
     tfstate = load_tfstate()
-
-    worker_ips = extract_ips(tfstate, "network_config_worker")
-    master_ips = extract_ips(tfstate, "network_config_master")
     hosts = []
-    hosts.extend([{"name": f"k8s_master_{i+1}", "ip": ip} for i, ip in enumerate(master_ips)])
-    hosts.extend([{"name": f"k8s_worker_{i+1}", "ip": ip} for i, ip in enumerate(worker_ips)])
+    for resource in tfstate['resources']:
+        if resource['type'] == 'libvirt_domain' and resource['name'] == 'vm':
+            for instance in resource['instances']:
+                network_interface = instance['attributes']['network_interface'][0]
+                hosts.append({
+                    "name": network_interface['hostname'].replace('_', '.'),
+                    "ip": network_interface['addresses'][0].split('/')[0],
+                })
     return hosts
 
 
-#debug()
 main()

@@ -29,22 +29,11 @@ provider "libvirt" {
   uri = var.libvirt_url
 }
 
-#******** Network settings ********#
-resource "libvirt_network" "k8snet" {
-  name = "k8snet"
-  mode = "bridge"
-  bridge = var.virtual_bridge
-  autostart = true
-  dhcp {
-    enabled = false
-  }
-}
-
+#******** VMs ********#
 data "template_file" "user_data" {
   template = file("${path.module}/cloud_init.cfg")
 }
 
-#******** VMs ********#
 data "template_file" "network_config" {
   count    = length(var.vms)
   template = file("${path.module}/network_config_${var.vms[count.index].name}.cfg")
@@ -70,11 +59,12 @@ resource "libvirt_domain" "vm" {
   autostart = true
 
   network_interface {
-    network_id = libvirt_network.k8snet.id
     hostname   = var.vms[count.index].name
     addresses  = [var.vms[count.index].ip]
     mac        = var.vms[count.index].mac
+    bridge     = var.virtual_bridge
   }
+  qemu_agent =  true
 
   cpu {
     mode = "host-passthrough"
