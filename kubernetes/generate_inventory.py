@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
 import json
-import yaml
-import re
+
 
 def main():
     inventory = {
@@ -49,35 +48,23 @@ def main():
     print(json.dumps(inventory))
 
 
-def load_tfstate(tfstate_path):
+def load_tfstate():
+    tfstate_path = './terraform.tfstate'
     with open(tfstate_path) as f:
         return json.load(f)
 
 
-def extract_ips(tfstate, resource_name):
-    ips = []
-    for resource in tfstate['resources']:
-        if (
-            resource['type'] == 'template_file'
-            and resource['name'] == resource_name
-        ):
-            for instance in resource['instances']:
-                yml = yaml.load(instance['attributes']['rendered'], Loader=yaml.SafeLoader)
-                ip_addr = yml['ethernets']['eth0']['addresses'][0].split('/')[0]
-                ips.append(ip_addr)
-    return ips
-
-
 def get_hosts():
-    # Load .tfstate
-    tfstate_path = './terraform.tfstate'
-    tfstate = load_tfstate(tfstate_path)
-
-    worker_ips = extract_ips(tfstate, "network_config_worker")
-    master_ips = extract_ips(tfstate, "network_config_master")
+    tfstate = load_tfstate()
     hosts = []
-    hosts.extend([{"name": f"k8s.master{i+1}", "ip": ip} for i, ip in enumerate(master_ips)])
-    hosts.extend([{"name": f"k8s.worker{i+1}", "ip": ip} for i, ip in enumerate(worker_ips)])
+    for resource in tfstate['resources']:
+        if resource['type'] == 'libvirt_domain' and resource['name'] == 'vm':
+            for instance in resource['instances']:
+                network_interface = instance['attributes']['network_interface'][0]
+                hosts.append({
+                    "name": network_interface['hostname'].replace('_', '.'),
+                    "ip": network_interface['addresses'][0].split('/')[0],
+                })
     return hosts
 
 
