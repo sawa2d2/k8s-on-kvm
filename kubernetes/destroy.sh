@@ -36,10 +36,10 @@ done
 
 # Remove images from the default pool
 image_list=( \
-    "/var/lib/libvirt/images/commoninit_master_1.iso" \
-    "/var/lib/libvirt/images/commoninit_master_2.iso" \
-    "/var/lib/libvirt/images/commoninit_worker_1.iso" \
-    "/var/lib/libvirt/images/commoninit_worker_2.iso" \
+    "/var/lib/libvirt/images/commoninit_k8s_master_1.iso" \
+    "/var/lib/libvirt/images/commoninit_k8s_master_2.iso" \
+    "/var/lib/libvirt/images/commoninit_k8s_worker_1.iso" \
+    "/var/lib/libvirt/images/commoninit_k8s_worker_2.iso" \
     "/var/lib/libvirt/images/k8s_master_1.qcow2" \
     "/var/lib/libvirt/images/k8s_master_2.qcow2" \
     "/var/lib/libvirt/images/k8s_worker_1.qcow2" \

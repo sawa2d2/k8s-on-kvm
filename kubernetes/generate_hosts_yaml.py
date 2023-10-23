@@ -67,7 +67,30 @@ def main():
             print(line)
 
 
-def load_tfstate(tfstate_path):
+def debug():
+    tfstate = load_tfstate()
+    for resource in tfstate['resources']:
+        if (
+            resource['type'] == 'template_file'
+            and resource['name'] == "network_config_master"
+        ):
+            print("attributes.rendered")
+            for instance in resource['instances']:
+                yml = yaml.load(instance['attributes']['rendered'], Loader=yaml.SafeLoader)
+                print(yml)
+
+        if (
+            resource['type'] == 'libvirt_cloudinit_disk'
+            and resource['name'] == "commoninit_master"
+        ):
+            print("attributes.network_config")
+            for instance in resource['instances']:
+                yml = yaml.load(instance['attributes']['network_config'], Loader=yaml.SafeLoader)
+                print(yml)
+
+
+def load_tfstate():
+    tfstate_path = './terraform.tfstate'
     with open(tfstate_path) as f:
         return json.load(f)
 
@@ -87,9 +110,7 @@ def extract_ips(tfstate, resource_name):
 
 
 def get_hosts():
-    # Load .tfstate
-    tfstate_path = './terraform.tfstate'
-    tfstate = load_tfstate(tfstate_path)
+    tfstate = load_tfstate()
 
     worker_ips = extract_ips(tfstate, "network_config_worker")
     master_ips = extract_ips(tfstate, "network_config_master")
@@ -99,4 +120,5 @@ def get_hosts():
     return hosts
 
 
+#debug()
 main()

@@ -27,7 +27,7 @@ done
 
 # Provision VMs
 terraform init
-terraform apply -auto-approve
+terraform apply -auto-approve -var-file="variables.tfvars"
 sleep 30
 
 # Check if enable to login via ssh
