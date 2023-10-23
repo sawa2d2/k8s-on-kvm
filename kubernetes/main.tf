@@ -2,15 +2,17 @@
 variable "libvirt_url" {}
 variable "vm_base_image_uri" {}
 variable "virtual_bridge" {}
+variable "gateway" {}
+variable "nameservers" {}
 variable "vms" {
-    type = list(
-      object({
-        name   = string
-        vcpu   = number
-        memory = number
-        disk   = number
-        ip     = string
-        mac    = string
+  type = list(
+    object({
+      name   = string
+      vcpu   = number
+      memory = number
+      disk   = number
+      ip     = string
+      mac    = string
     })
   )
 }
@@ -29,14 +31,19 @@ provider "libvirt" {
   uri = var.libvirt_url
 }
 
-#******** VMs ********#
+#******** cloudinit ********#
 data "template_file" "user_data" {
   template = file("${path.module}/cloud_init.cfg")
 }
 
 data "template_file" "network_config" {
   count    = length(var.vms)
-  template = file("${path.module}/network_config_${var.vms[count.index].name}.cfg")
+  template = file("${path.module}/network_config.cfg.tpl")
+  vars = {
+    ip          = var.vms[count.index].ip
+    gateway     = var.gateway
+    nameservers = var.nameservers
+  }
 }
 
 resource "libvirt_cloudinit_disk" "commoninit" {
@@ -46,6 +53,7 @@ resource "libvirt_cloudinit_disk" "commoninit" {
   network_config = data.template_file.network_config[count.index].rendered
 }
 
+#******** VMs ********#
 resource "libvirt_domain" "vm" {
   count  = length(var.vms)
   name   = var.vms[count.index].name
@@ -72,10 +80,10 @@ resource "libvirt_domain" "vm" {
 }
 
 resource "libvirt_volume" "vm_volume" {
-  count  = length(var.vms)
-  name   = "${var.vms[count.index].name}.qcow2"
-  pool = "default" 
-  format = "qcow2"
+  count          = length(var.vms)
+  name           = "${var.vms[count.index].name}.qcow2"
+  pool           = "default"
+  format         = "qcow2"
   base_volume_id = var.vm_base_image_uri
-  size   = var.vms[count.index].disk
+  size           = var.vms[count.index].disk
 }
