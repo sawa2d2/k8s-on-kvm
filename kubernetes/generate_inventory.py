@@ -32,12 +32,12 @@ def main():
     worker_name_set = [host['name'] for host in hosts if "k8s.worker" in host['name']]
 
     control_plane = master_name_set
-    inventory['kube_node'] = control_plane
+    inventory['kube_control_plane'] = control_plane
 
     kube_node = []
     kube_node.extend(master_name_set)
     kube_node.extend(worker_name_set)
-    inventory['kube_control_plane'] = kube_node
+    inventory['kube_node'] = kube_node
 
     etcd = []
     etcd.extend(master_name_set)
