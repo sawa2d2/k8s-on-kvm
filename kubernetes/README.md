@@ -87,12 +87,14 @@ $ ansible-playbook -i ./generate_inventory.py cluster.yml
 
 ### (Option.2) Using static inventory
 ```
+$ ./generate_inventory.py | ./convert_inventory_to_yaml.sh > ./inventory/hosts.yaml
 $ podman run --rm -it \
   --mount type=bind,source="$(pwd)"/inventory,dst=/inventory \
   --mount type=bind,source="${HOME}"/.ssh/id_ed25519,dst=/root/.ssh/id_ed25519 \
   quay.io/kubespray/kubespray:v2.22.1 bash
 ```
+
+Inside the container run:
 ```
-$ ./generate_inventory.py | ./convert_inventory_to_yaml.sh > ./inventory/hosts.yaml
 $ ansible-playbook -i /inventory/hosts.yaml cluster.yml
 ```
