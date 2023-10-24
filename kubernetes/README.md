@@ -2,7 +2,7 @@
 
 Here is a sample code of this article [Terraform + kubespray で KVM 上に Kubernetes クラスタを構築 - Qiita](https://qiita.com/sawa2d2/items/c592dcbd958f69441068).
 
-## Network architecture
+## Summary
 
 Here I will explain how to build a Kubernetes cluster on KVM using Terraform + Kubespray according to the general steps:
 
@@ -18,13 +18,12 @@ The VM configuration in this repository is as shown in the diagram below:
 
 ## Prerequisite
 - Terraform
-- podman
+- Container engine (docker, podman, nerdctl, etc.)
 - KVM Packages
   - qemu-kvm
   - libvirt-clients
   - libvirt-daemon
-  - bridge-utils
-  - virt-manager
+- nmcli
 
 ## Setup
 
@@ -69,7 +68,7 @@ Pull the container image in advance:
 $ podman pull quay.io/kubespray/kubespray:v2.22.1
 ```
 
-### Using dynamic inventory
+### (Option.1) Using dynamic inventory
 ```
 $ podman run --rm -it \
   --mount type=bind,source="$(pwd)"/inventory,dst=/inventory \
@@ -84,7 +83,7 @@ Inside the container run:
 $ ansible-playbook -i ./generate_inventory.py cluster.yml
 ```
 
-### Using static inventory
+### (Option.2) Using static inventory
 ```
 $ podman run --rm -it \
   --mount type=bind,source="$(pwd)"/inventory,dst=/inventory \
@@ -92,6 +91,6 @@ $ podman run --rm -it \
   quay.io/kubespray/kubespray:v2.22.1 bash
 ```
 ```
-$ ./generate_hosts_yaml.py > ./inventory/hosts.yaml
+$ ./generate_inventory.py | ./convert_inventory_to_yaml.sh > ./inventory/hosts.yaml
 $ ansible-playbook -i /inventory/hosts.yaml cluster.yml
 ```
