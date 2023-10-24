@@ -24,6 +24,8 @@ The VM configuration in this repository is as shown in the diagram below:
   - libvirt-clients
   - libvirt-daemon
 - nmcli
+- jq
+- yq
 
 ## Setup
 
