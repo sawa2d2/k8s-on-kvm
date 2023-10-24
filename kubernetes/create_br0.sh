@@ -28,5 +28,6 @@ ipv4.gateway "$GATEWAY" \
 ipv4.dns $DNS
 
 nmcli connection add type bridge-slave ifname $nwif master bridge-br0
-
 nmcli connection delete $nwif
+
+nmcli connection up bridge-br0
