@@ -1,6 +1,6 @@
-# Localhost: qemu:///system
-# Remote   : qemu+ssh://<user>@<host>/system
-libvirt_url = "qemu:///system"
+# Localhost: "qemu:///system"
+# Remote   : "qemu+ssh://<user>@<host>/system"
+libvirt_uri = "qemu:///system"
 
 ### Base image URI for VM ###
 # Download the image by:
@@ -15,7 +15,7 @@ nameservers = "[\"192.168.8.1\"]"
 
 vms = [
   {
-    name   = "k8s_master_1"
+    name   = "k8s-master-1"
     vcpu   = 4
     memory = 16000 # in MiB
     disk   = 100 * 1024 * 1024 * 1024  # 100 GB
@@ -23,7 +23,7 @@ vms = [
     mac    = "52:54:00:00:00:01"
   },
   {
-    name   = "k8s_master_2"
+    name   = "k8s-master-2"
     vcpu   = 4
     memory = 16000 # in MiB
     disk   = 100 * 1024 * 1024 * 1024  # 100 GB
@@ -31,7 +31,7 @@ vms = [
     mac    = "52:54:00:00:00:02"
   },
   {
-    name   = "k8s_worker_1"
+    name   = "k8s-worker-1"
     vcpu   = 2
     memory = 8000 # in MiB
     disk   = 100 * 1024 * 1024 * 1024  # 100 GB
@@ -39,7 +39,7 @@ vms = [
     mac    = "52:54:00:00:00:03"
   },
   {
-    name   = "k8s_worker_2"
+    name   = "k8s-worker-2"
     vcpu   = 2
     memory = 8000 # in MiB
     disk   = 100 * 1024 * 1024 * 1024  # 100 GB

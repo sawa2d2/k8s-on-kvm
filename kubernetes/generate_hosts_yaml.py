@@ -41,8 +41,8 @@ def main():
         }
 
     # Set .all.children
-    master_name_set = [host['name'] for host in hosts if "k8s.master" in host['name']]
-    worker_name_set = [host['name'] for host in hosts if "k8s.worker" in host['name']]
+    master_name_set = [host['name'] for host in hosts if "master" in host['name']]
+    worker_name_set = [host['name'] for host in hosts if "worker" in host['name']]
 
     control_plane = master_name_set
     inventory['all']['children']['kube_control_plane']['hosts'] = control_plane
@@ -77,11 +77,11 @@ def get_hosts():
     tfstate = load_tfstate()
     hosts = []
     for resource in tfstate['resources']:
-        if resource['type'] == 'libvirt_domain' and resource['name'] == 'vm':
+        if resource['type'] == 'libvirt_domain':
             for instance in resource['instances']:
                 network_interface = instance['attributes']['network_interface'][0]
                 hosts.append({
-                    "name": network_interface['hostname'].replace('_', '.'),
+                    "name": network_interface['hostname'],
                     "ip": network_interface['addresses'][0].split('/')[0],
                 })
     return hosts

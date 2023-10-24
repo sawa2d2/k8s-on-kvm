@@ -1,5 +1,5 @@
 #******** Variable definitions ********#
-variable "libvirt_url" {}
+variable "libvirt_uri" {}
 variable "vm_base_image_uri" {}
 variable "virtual_bridge" {}
 variable "gateway" {}
@@ -28,7 +28,7 @@ terraform {
 }
 
 provider "libvirt" {
-  uri = var.libvirt_url
+  uri = var.libvirt_uri
 }
 
 #******** cloudinit ********#
@@ -76,6 +76,11 @@ resource "libvirt_domain" "vm" {
 
   cpu {
     mode = "host-passthrough"
+  }
+
+  graphics {
+    type        = "vnc"
+    listen_type = "address"
   }
 }
 
