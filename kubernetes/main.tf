@@ -7,12 +7,13 @@ variable "nameservers" {}
 variable "vms" {
   type = list(
     object({
-      name   = string
-      vcpu   = number
-      memory = number
-      disk   = number
-      ip     = string
-      mac    = string
+      name        = string
+      vcpu        = number
+      memory      = number
+      disk        = number
+      ip          = string
+      mac         = string
+      description = string
     })
   )
 }
@@ -55,7 +56,9 @@ resource "libvirt_cloudinit_disk" "commoninit" {
 
 #******** VMs ********#
 resource "libvirt_domain" "vm" {
-  count  = length(var.vms)
+  count       = length(var.vms)
+  description = var.vms[count.index].description
+
   name   = var.vms[count.index].name
   vcpu   = var.vms[count.index].vcpu
   memory = var.vms[count.index].memory

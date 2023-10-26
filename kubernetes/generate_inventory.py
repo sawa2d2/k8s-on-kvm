@@ -4,46 +4,43 @@ import json
 
 
 def main():
+    hosts = get_hosts()
+
+    hostvars = {}
+    kube_control_plane = []
+    kube_node = []
+    etcd = []
+    for host in hosts:
+        hostvars.update({
+          host['name']: {
+              "ansible_host": host['ip'],
+              "ip": host['ip'],
+              "access_ip": host['ip'],
+          }
+        })
+        config = json.loads(host["description"])
+        config_k8s = config["kubernetes"]
+        if config_k8s["kube_control_plane"]:
+            kube_control_plane.append(host["name"])
+        if config_k8s["kube_node"]:
+            kube_node.append(host["name"])
+        if config_k8s["etcd"]:
+            etcd.append(host["name"])
+
     inventory = {
         "_meta": {
-            "hostvars": {},
+            "hostvars": hostvars,
         },
-        "etcd": [],
+        "etcd": etcd,
         "k8s_cluster": {
             "children": [
                 "kube_control_plane",
                 "kube_node",
             ]
         },
-        "kube_control_plane": [],
-        "kube_node": [],
+        "kube_control_plane": kube_control_plane,
+        "kube_node": kube_node,
     }
-    # Set .all.hosts
-    hosts = get_hosts()
-    for host in hosts:
-        inventory['_meta']['hostvars'][host['name']] = {
-            "ansible_host": host['ip'],
-            "ip": host['ip'],
-            "access_ip": host['ip'],
-        }
-
-    # Set .all.children
-    master_name_set = [host['name'] for host in hosts if "master" in host['name']]
-    worker_name_set = [host['name'] for host in hosts if "worker" in host['name']]
-
-    control_plane = master_name_set
-    inventory['kube_control_plane'] = control_plane
-
-    kube_node = []
-    kube_node.extend(master_name_set)
-    kube_node.extend(worker_name_set)
-    inventory['kube_node'] = kube_node
-
-    etcd = []
-    etcd.extend(master_name_set)
-    if len(master_name_set) % 2 == 0:
-        etcd.append(worker_name_set[0])
-    inventory['etcd'] = etcd
 
     print(json.dumps(inventory))
 
@@ -60,10 +57,12 @@ def get_hosts():
     for resource in tfstate['resources']:
         if resource['type'] == 'libvirt_domain':
             for instance in resource['instances']:
-                network_interface = instance['attributes']['network_interface'][0]
+                attributes = instance['attributes']
+                network_interface = attributes['network_interface'][0]
                 hosts.append({
                     "name": network_interface['hostname'],
                     "ip": network_interface['addresses'][0].split('/')[0],
+                    "description": attributes['description']
                 })
     return hosts
 
