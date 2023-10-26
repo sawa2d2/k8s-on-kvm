@@ -31,6 +31,8 @@ def main():
         "_meta": {
             "hostvars": hostvars,
         },
+        "kube_control_plane": kube_control_plane,
+        "kube_node": kube_node,
         "etcd": etcd,
         "k8s_cluster": {
             "children": [
@@ -38,8 +40,9 @@ def main():
                 "kube_node",
             ]
         },
-        "kube_control_plane": kube_control_plane,
-        "kube_node": kube_node,
+        "calico_rr": {
+            "hosts": {}
+        }
     }
 
     print(json.dumps(inventory))
