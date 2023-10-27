@@ -22,7 +22,7 @@ variable "vms" {
 terraform {
   required_providers {
     libvirt = {
-      source = "dmacvicar/libvirt"
+      source  = "dmacvicar/libvirt"
       version = "0.7.4"
     }
   }
@@ -70,12 +70,12 @@ resource "libvirt_domain" "vm" {
   autostart = true
 
   network_interface {
-    hostname   = var.vms[count.index].name
-    addresses  = [var.vms[count.index].ip]
-    mac        = var.vms[count.index].mac
-    bridge     = var.virtual_bridge
+    hostname  = var.vms[count.index].name
+    addresses = [var.vms[count.index].ip]
+    mac       = var.vms[count.index].mac
+    bridge    = var.virtual_bridge
   }
-  qemu_agent =  true
+  qemu_agent = true
 
   cpu {
     mode = "host-passthrough"

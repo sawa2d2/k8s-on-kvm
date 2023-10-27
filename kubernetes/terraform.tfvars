@@ -17,8 +17,8 @@ vms = [
   {
     name        = "k8s-master-1"
     vcpu        = 4
-    memory      = 16000 # in MiB
-    disk        = 100 * 1024 * 1024 * 1024  # 100 GB
+    memory      = 16000                    # in MiB
+    disk        = 100 * 1024 * 1024 * 1024 # 100 GB
     ip          = "192.168.8.201/24"
     mac         = "52:54:00:00:00:01"
     description = <<EOT
@@ -34,8 +34,8 @@ vms = [
   {
     name        = "k8s-master-2"
     vcpu        = 4
-    memory      = 16000 # in MiB
-    disk        = 100 * 1024 * 1024 * 1024  # 100 GB
+    memory      = 16000                    # in MiB
+    disk        = 100 * 1024 * 1024 * 1024 # 100 GB
     ip          = "192.168.8.202/24"
     mac         = "52:54:00:00:00:02"
     description = <<EOT
@@ -51,8 +51,8 @@ vms = [
   {
     name        = "k8s-worker-1"
     vcpu        = 2
-    memory      = 8000 # in MiB
-    disk        = 100 * 1024 * 1024 * 1024  # 100 GB
+    memory      = 8000                     # in MiB
+    disk        = 100 * 1024 * 1024 * 1024 # 100 GB
     ip          = "192.168.8.203/24"
     mac         = "52:54:00:00:00:03"
     description = <<EOT
@@ -68,8 +68,8 @@ vms = [
   {
     name        = "k8s-worker-2"
     vcpu        = 2
-    memory      = 8000 # in MiB
-    disk        = 100 * 1024 * 1024 * 1024  # 100 GB
+    memory      = 8000                     # in MiB
+    disk        = 100 * 1024 * 1024 * 1024 # 100 GB
     ip          = "192.168.8.204/24"
     mac         = "52:54:00:00:00:04"
     description = <<EOT
