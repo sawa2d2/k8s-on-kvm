@@ -21,7 +21,7 @@ vms = [
     disk        = 100 * 1024 * 1024 * 1024 # 100 GB
     ip          = "192.168.8.201/24"
     mac         = "52:54:00:00:00:01"
-    description = <<EOT
+    description = <<-EOT
     {
       "kubernetes": {
         "kube_control_plane": true,
@@ -38,7 +38,7 @@ vms = [
     disk        = 100 * 1024 * 1024 * 1024 # 100 GB
     ip          = "192.168.8.202/24"
     mac         = "52:54:00:00:00:02"
-    description = <<EOT
+    description = <<-EOT
     {
       "kubernetes": {
         "kube_control_plane": true,
@@ -55,7 +55,7 @@ vms = [
     disk        = 100 * 1024 * 1024 * 1024 # 100 GB
     ip          = "192.168.8.203/24"
     mac         = "52:54:00:00:00:03"
-    description = <<EOT
+    description = <<-EOT
     {
       "kubernetes": {
         "kube_control_plane": false,
@@ -72,7 +72,7 @@ vms = [
     disk        = 100 * 1024 * 1024 * 1024 # 100 GB
     ip          = "192.168.8.204/24"
     mac         = "52:54:00:00:00:04"
-    description = <<EOT
+    description = <<-EOT
     {
       "kubernetes": {
         "kube_control_plane": false,
