@@ -1,6 +1,6 @@
-# How to create kubernetes cluster on KVM with terraform + kubespray
+# How to create kubernetes cluster on KVM with Terraform + Kubespray
 
-Here is a sample code of this article [Terraform + kubespray で KVM 上に Kubernetes クラスタを構築 - Qiita](https://qiita.com/sawa2d2/items/c592dcbd958f69441068).
+Here is a sample code of this article [Terraform + Kubespray で KVM 上に Kubernetes クラスタを構築 - Qiita](https://qiita.com/sawa2d2/items/c592dcbd958f69441068).
 
 ## Summary
 
@@ -58,9 +58,9 @@ users:
 
 ## Provisioning VMs
 ```
-terraform destroy -auto-approve -var-file="variables.tfvars"
+terraform destroy -auto-approve
 terraform init
-terraform apply -auto-approve -var-file="variables.tfvars"
+terraform apply -auto-approve
 ```
 
 ## Creating a k8s Cluster
