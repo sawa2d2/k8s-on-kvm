@@ -1,4 +1,4 @@
 inventory/credentials
 inventory/hosts.yaml
 network_config_*.cfg
-!variables.tfvars
+!terraform.tfvars
