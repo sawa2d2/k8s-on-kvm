@@ -18,13 +18,12 @@ def main():
               "access_ip": host['ip'],
           }
         })
-        config = json.loads(host["description"])
-        config_k8s = config["kubernetes"]
-        if config_k8s["kube_control_plane"]:
+        config = host["config"]["kubernetes"]
+        if config["kube_control_plane"]:
             kube_control_plane.append(host["name"])
-        if config_k8s["kube_node"]:
+        if config["kube_node"]:
             kube_node.append(host["name"])
-        if config_k8s["etcd"]:
+        if config["etcd"]:
             etcd.append(host["name"])
 
     inventory = {
@@ -65,7 +64,7 @@ def get_hosts():
                 hosts.append({
                     "name": network_interface['hostname'],
                     "ip": network_interface['addresses'][0].split('/')[0],
-                    "description": attributes['description']
+                    "config": json.loads(attributes["description"])
                 })
     return hosts
 
