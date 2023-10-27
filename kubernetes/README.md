@@ -41,7 +41,7 @@ $ ./create_br0.sh
 ```
 
 It illustrates a change from 'Before' to 'After' as demonstrated in the diagram below:
-![dynamic_inventory](./images/dynamic_inventory.drawio.png)
+![dynamic_inventory](./images/network-diff.drawio.png)
 
 Download a qcow2 image file of Rocky Linux 8.8 to the default pool of livbirt `/var/lib/libvirt/images/`:
 
