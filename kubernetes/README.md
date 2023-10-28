@@ -37,33 +37,30 @@ $ cd k8s-on-kvm/kubernetes
 
 Create virtual bridge `br0` as follow steps:
 ```
-$ HOST_IP=192.168.8.10
-$ CIDR=24
-$ GATEWAY=192.168.8.1
-$ DNS=192.168.8.1
-$ NWIF=enp1s0
+# Settings
+HOST_IP=192.168.8.10
+CIDR=24
+GATEWAY=192.168.8.1
+DNS=192.168.8.1
+NWIF=enp1s0
 
 # Create br0
-$ nmcli connection add type bridge ifname br0
-$ nmcli connection show
-NAME                UUID                                  TYPE       DEVICE
-bridge-br0          55bef68c-1232-46c3-adac-e40964c24d4d  bridge     br0
-...
+nmcli connection add type bridge ifname br0
 
 # Set br0 same settings of enp1s0
-$ nmcli connection modify bridge-br0 \
-ipv4.method manual \
-ipv4.addresses "$HOST_IP/$CIDR" \
-ipv4.gateway "$GATEWAY" \
-ipv4.dns $DNS
+nmcli connection modify bridge-br0 \
+  ipv4.method manual \
+  ipv4.addresses "$HOST_IP/$CIDR" \
+  ipv4.gateway "$GATEWAY" \
+  ipv4.dns $DNS
 
 # Connect enp1s0 to br0
-$ nmcli connection add type bridge-slave ifname $NWIF master bridge-br0
+nmcli connection add type bridge-slave ifname $NWIF master bridge-br0
 # Delete the existing network interface of enp1s0
-$ nmcli connection delete $NWIF
+nmcli connection delete $NWIF
 
 # Enable br0
-$ nmcli connection up bridge-br0
+nmcli connection up bridge-br0
 ```
 
 It illustrates a change from 'Before' to 'After' as demonstrated in the diagram below:
