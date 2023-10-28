@@ -35,9 +35,35 @@ $ git clone https://github.com/sawa2d2/k8s-on-kvm.git
 $ cd k8s-on-kvm/kubernetes
 ```
 
-Create virtual bridge `br0`:
+Create virtual bridge `br0` as follow steps:
 ```
-$ ./create_br0.sh
+$ HOST_IP=192.168.8.10
+$ CIDR=24
+$ GATEWAY=192.168.8.1
+$ DNS=192.168.8.1
+$ NWIF=enp1s0
+
+# Create br0
+$ nmcli connection add type bridge ifname br0
+$ nmcli connection show
+NAME                UUID                                  TYPE       DEVICE
+bridge-br0          55bef68c-1232-46c3-adac-e40964c24d4d  bridge     br0
+...
+
+# Set br0 same settings of enp1s0
+$ nmcli connection modify bridge-br0 \
+ipv4.method manual \
+ipv4.addresses "$HOST_IP/$CIDR" \
+ipv4.gateway "$GATEWAY" \
+ipv4.dns $DNS
+
+# Connect enp1s0 to br0
+$ nmcli connection add type bridge-slave ifname $NWIF master bridge-br0
+# Delete the existing network interface of enp1s0
+$ nmcli connection delete $NWIF
+
+# Enable br0
+$ nmcli connection up bridge-br0
 ```
 
 It illustrates a change from 'Before' to 'After' as demonstrated in the diagram below:
@@ -70,12 +96,12 @@ terraform apply -auto-approve
 
 Pull the container image in advance:
 ```
-$ podman pull quay.io/kubespray/kubespray:v2.22.1
+$ docker pull quay.io/kubespray/kubespray:v2.22.1
 ```
 
 ### (Option.1) Using dynamic inventory
 ```
-$ podman run --rm -it \
+$ docker run --rm -it \
   --mount type=bind,source="$(pwd)"/inventory,dst=/inventory \
   --mount type=bind,source="$(pwd)"/generate_inventory.py,dst=/kubespray/generate_inventory.py \
   --mount type=bind,source="$(pwd)"/terraform.tfstate,dst=/kubespray/terraform.tfstate \
@@ -91,7 +117,7 @@ $ ansible-playbook -i ./generate_inventory.py cluster.yml
 ### (Option.2) Using static inventory
 ```
 $ ./generate_inventory.py | ./convert_inventory_to_yaml.sh > ./inventory/hosts.yaml
-$ podman run --rm -it \
+$ docker run --rm -it \
   --mount type=bind,source="$(pwd)"/inventory,dst=/inventory \
   --mount type=bind,source="${HOME}"/.ssh/id_ed25519,dst=/root/.ssh/id_ed25519 \
   quay.io/kubespray/kubespray:v2.22.1 bash
