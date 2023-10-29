@@ -15,10 +15,22 @@ module "kvm_cloudinit" {
       disk        = 100 * 1024 * 1024 * 1024 # 100 GB
       ip          = "192.168.8.201/24"
       mac         = "52:54:00:00:00:01"
-      description = ""
+      description = <<-EOT
+      {
+        "kubernetes": {
+          "kube_control_plane": true,
+          "kube_node": true,
+          "etcd": true
+        }
+      }
+      EOT
       volumes = [
         {
           name = "vdb"
+          disk = 1024 * 1024 * 1024 * 1024 # 1 TB 
+        },
+        {
+          name = "vdc"
           disk = 1024 * 1024 * 1024 * 1024 # 1 TB 
         },
       ]
@@ -30,7 +42,15 @@ module "kvm_cloudinit" {
       disk        = 100 * 1024 * 1024 * 1024 # 100 GB
       ip          = "192.168.8.202/24"
       mac         = "52:54:00:00:00:02"
-      description = ""
+      description = <<-EOT
+      {
+        "kubernetes": {
+          "kube_control_plane": true,
+          "kube_node": true,
+          "etcd": true
+        }
+      }
+      EOT
       volumes = [
         {
           name = "vdb"
@@ -45,7 +65,15 @@ module "kvm_cloudinit" {
       disk        = 100 * 1024 * 1024 * 1024 # 100 GB
       ip          = "192.168.8.203/24"
       mac         = "52:54:00:00:00:03"
-      description = ""
+      description = <<-EOT
+      {
+        "kubernetes": {
+          "kube_control_plane": false,
+          "kube_node": true,
+          "etcd": true
+        }
+      }
+      EOT
       volumes = [
         {
           name = "vdb"
@@ -60,7 +88,15 @@ module "kvm_cloudinit" {
       disk        = 100 * 1024 * 1024 * 1024 # 100 GB
       ip          = "192.168.8.204/24"
       mac         = "52:54:00:00:00:04"
-      description = ""
+      description = <<-EOT
+      {
+        "kubernetes": {
+          "kube_control_plane": false,
+          "kube_node": true,
+          "etcd": false
+        }
+      }
+      EOT
       volumes     = []
     },
   ]
