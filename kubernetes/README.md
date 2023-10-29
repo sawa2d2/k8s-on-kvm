@@ -21,8 +21,7 @@ The VM configuration in this repository is as shown in the diagram below:
 - Container engine (docker, podman, nerdctl, etc.)
 - KVM Packages
   - qemu-kvm
-  - libvirt-clients
-  - libvirt-daemon
+  - libvirt
 - nmcli
 - jq
 - yq
