@@ -1,0 +1,30 @@
+#!/bin/bash
+
+HAPROXY="/etc/haproxy"
+OVERRIDE="/haproxy-override"
+PIDFILE="/var/run/haproxy.pid"
+
+CONFIG="haproxy.cfg"
+ERRORS="errors"
+
+cd "$HAPROXY"
+
+# Symlink errors directory
+if [[ -d "$OVERRIDE/$ERRORS" ]]; then
+  mkdir -p "$OVERRIDE/$ERRORS"
+  rm -fr "$ERRORS"
+  ln -s "$OVERRIDE/$ERRORS" "$ERRORS"
+fi
+
+# Symlink config file.
+if [[ -f "$OVERRIDE/$CONFIG" ]]; then
+  rm -f "$CONFIG"
+  ln -s "$OVERRIDE/$CONFIG" "$CONFIG"
+fi
+
+tee "/etc/sysctl.d/ip_nonlocal_bind.conf" << EOF
+net.ipv4.ip_nonlocal_bind=1
+EOF
+sysctl -w net.ipv4.ip_nonlocal_bind=1
+
+exec haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid
