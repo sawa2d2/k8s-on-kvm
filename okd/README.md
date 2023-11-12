@@ -42,6 +42,8 @@ release architecture amd64
 Create `main.tf` as below:
 ```
 module "okd" {
+  source = "github.com/sawa2d2/k8s-on-kvm//okd/"
+
   libvirt_uri                = "qemu:///system"
   domain                     = "ocp4.example.com"
   network_name               = "okd"
