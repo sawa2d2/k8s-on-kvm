@@ -16,13 +16,10 @@ module "ceph_rook" {
       mac            = "52:54:00:00:00:01"
       cloudinit_file = "cloud_init.cfg"
       description    = <<-EOT
-      {
-        "kubernetes": {
-          "kube_control_plane": true,
-          "kube_node": true,
+        "kubernetes":
+          "kube_control_plane": true
+          "kube_node": true
           "etcd": true
-        }
-      }
       EOT
       volumes = [
         {
@@ -36,21 +33,18 @@ module "ceph_rook" {
       ]
     },
     {
-      name           = "storage-2"
-      vcpu           = 4
-      memory         = 16000                    # in MiB
-      disk           = 100 * 1024 * 1024 * 1024 # 100 GB
-      ip             = "192.168.8.202/24"
-      mac            = "52:54:00:00:00:02"
+      name        = "storage-2"
+      vcpu        = 4
+      memory      = 16000                    # in MiB
+      disk        = 100 * 1024 * 1024 * 1024 # 100 GB
+      ip          = "192.168.8.202/24"
+      mac         = "52:54:00:00:00:02"
       cloudinit_file = "cloud_init.cfg"
-      description    = <<-EOT
-      {
-        "kubernetes": {
-          "kube_control_plane": true,
-          "kube_node": true,
+      description = <<-EOT
+        "kubernetes":
+          "kube_control_plane": true
+          "kube_node": true
           "etcd": true
-        }
-      }
       EOT
       volumes = [
         {
@@ -60,21 +54,18 @@ module "ceph_rook" {
       ]
     },
     {
-      name           = "storage-3"
-      vcpu           = 4
-      memory         = 16000                    # in MiB
-      disk           = 100 * 1024 * 1024 * 1024 # 100 GB
-      ip             = "192.168.8.203/24"
-      mac            = "52:54:00:00:00:03"
+      name        = "storage-3"
+      vcpu        = 4
+      memory      = 16000                    # in MiB
+      disk        = 100 * 1024 * 1024 * 1024 # 100 GB
+      ip          = "192.168.8.203/24"
+      mac         = "52:54:00:00:00:03"
       cloudinit_file = "cloud_init.cfg"
-      description    = <<-EOT
-      {
-        "kubernetes": {
-          "kube_control_plane": false,
-          "kube_node": true,
+      description = <<-EOT
+        "kubernetes":
+          "kube_control_plane": false
+          "kube_node": true
           "etcd": true
-        }
-      }
       EOT
       volumes = [
         {
@@ -84,23 +75,20 @@ module "ceph_rook" {
       ]
     },
     {
-      name           = "app"
-      vcpu           = 4
-      memory         = 16000                    # in MiB
-      disk           = 100 * 1024 * 1024 * 1024 # 100 GB
-      ip             = "192.168.8.204/24"
-      mac            = "52:54:00:00:00:04"
+      name        = "app"
+      vcpu        = 4
+      memory      = 16000                    # in MiB
+      disk        = 100 * 1024 * 1024 * 1024 # 100 GB
+      ip          = "192.168.8.204/24"
+      mac         = "52:54:00:00:00:04"
       cloudinit_file = "cloud_init.cfg"
-      description    = <<-EOT
-      {
-        "kubernetes": {
-          "kube_control_plane": false,
-          "kube_node": true,
+      description = <<-EOT
+        "kubernetes":
+          "kube_control_plane": false
+          "kube_node": true
           "etcd": false
-        }
-      }
       EOT
-      volumes        = []
+      volumes     = []
     },
   ]
 }
