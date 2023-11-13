@@ -1,10 +1,10 @@
-# How to create kubernetes cluster on KVM with Terraform + Kubespray
+# How to create a Kubernetes cluster on KVM with Terraform + Kubespray
 
 Here is a sample code of this article [Terraform + Kubespray で KVM 上に Kubernetes クラスタを構築 - Qiita](https://qiita.com/sawa2d2/items/c592dcbd958f69441068).
 
 ## Summary
 
-Here I will explain how to build a Kubernetes cluster on KVM using Terraform + Kubespray according to the general steps:
+Here explains how to build a Kubernetes cluster on KVM using Terraform + Kubespray according to the general steps:
 
 1. Create VMs using Terraform.
 1. From the generated `terraform.tfstate` in step 1., extract inventory information using a script (Dynamic Inventory).
