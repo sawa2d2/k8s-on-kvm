@@ -103,7 +103,7 @@ module "kubernetes" {
   gateway     = "192.168.8.1"
   nameservers = ["192.168.8.1"]
   
-  vms = [
+  nodes = [
     {
       name           = "k8s-master-1"
       vcpu           = 4
