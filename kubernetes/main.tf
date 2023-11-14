@@ -16,6 +16,6 @@ module "kubernetes" {
   gateway     = var.gateway
   nameservers = var.nameservers
 
-  pool = "default"
+  pool = var.pool
   vms  = local.vms
 }

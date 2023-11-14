@@ -96,6 +96,7 @@ module "kubernetes" {
   # Download the image by:
   #   sudo curl -L -o /var/lib/libvirt/images/Rocky-9-GenericCloud.latest.x86_64.qcow2 https://download.rockylinux.org/pub/rocky/9.2/images/x86_64/Rocky-9-GenericCloud.latest.x86_64.qcow2 
   vm_base_image_uri = "/var/lib/libvirt/images/Rocky-9-GenericCloud.latest.x86_64.qcow2"
+  pool              = "default"
   
   bridge      = "br0"
   cidr        = "192.168.8.0/24"
