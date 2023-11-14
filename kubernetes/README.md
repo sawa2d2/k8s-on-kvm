@@ -42,6 +42,7 @@ CIDR=24
 GATEWAY=192.168.8.1
 DNS=192.168.8.1
 NWIF=enp1s0
+CON_NAME="Wired Network 1"
 
 # Create br0
 nmcli connection add type bridge ifname br0
@@ -56,7 +57,7 @@ nmcli connection modify bridge-br0 \
 # Connect enp1s0 to br0
 nmcli connection add type bridge-slave ifname $NWIF master bridge-br0
 # Delete the existing network interface of enp1s0
-nmcli connection delete $NWIF
+nmcli connection delete $CON_NAME
 
 # Enable br0
 nmcli connection up bridge-br0
@@ -82,44 +83,129 @@ users:
 ```
 
 ## Provisioning VMs
+Create `main.tf` as follow on your local:
+
 ```
-terraform destroy -auto-approve
-terraform init
-terraform apply -auto-approve
+module "kubernetes" {
+  source = "github.com/sawa2d2/k8s-on-kvm//kubernetes/"
+
+  # Localhost: "qemu:///system"
+  # Remote   : "qemu+ssh://<user>@<host>/system"
+  libvirt_uri = "qemu:///system"
+  
+  # Download the image by:
+  #   sudo curl -L -o /var/lib/libvirt/images/Rocky-9-GenericCloud.latest.x86_64.qcow2 https://download.rockylinux.org/pub/rocky/9.2/images/x86_64/Rocky-9-GenericCloud.latest.x86_64.qcow2 
+  vm_base_image_uri = "/var/lib/libvirt/images/Rocky-9-GenericCloud.latest.x86_64.qcow2"
+  
+  bridge      = "br0"
+  cidr        = "192.168.8.0/24"
+  gateway     = "192.168.8.1"
+  nameservers = ["192.168.8.1"]
+  
+  vms = [
+    {
+      name           = "k8s-master-1"
+      vcpu           = 4
+      memory         = 16000                    # in MiB
+      disk           = 100 * 1024 * 1024 * 1024 # 100 GB
+      ip             = "192.168.8.101"
+      mac            = "52:54:00:00:01:01"
+      cloudinit_file = "cloud_init.cfg"
+      description    = ""
+      volumes        = []
+  
+      kube_control_plane = true
+      kube_node          = true
+      etcd               = true
+    },
+    {
+      name           = "k8s-master-2"
+      vcpu           = 4
+      memory         = 16000                    # in MiB
+      disk           = 100 * 1024 * 1024 * 1024 # 100 GB
+      ip             = "192.168.8.102"
+      mac            = "52:54:00:00:01:02"
+      cloudinit_file = "cloud_init.cfg"
+      description    = ""
+      volumes        = []
+  
+      kube_control_plane = true
+      kube_node          = true
+      etcd               = true
+    },
+    {
+      name           = "k8s-worker-1"
+      vcpu           = 2
+      memory         = 8000                     # in MiB
+      disk           = 100 * 1024 * 1024 * 1024 # 100 GB
+      ip             = "192.168.8.103"
+      mac            = "52:54:00:00:01:03"
+      cloudinit_file = "cloud_init.cfg"
+      description    = ""
+      volumes        = []
+  
+      kube_control_plane = false
+      kube_node          = true
+      etcd               = true
+    },
+    {
+      name           = "k8s-worker-2"
+      vcpu           = 2
+      memory         = 8000                     # in MiB
+      disk           = 100 * 1024 * 1024 * 1024 # 100 GB
+      ip             = "192.168.8.104"
+      mac            = "52:54:00:00:01:04"
+      cloudinit_file = "cloud_init.cfg"
+      description    = ""
+      volumes        = []
+  
+      kube_control_plane = false
+      kube_node          = true
+      etcd               = false
+    },
+  ]
+}
 ```
 
-## Creating a k8s Cluster
+Then run the following to create VMs:
 
-Pull the container image in advance:
+```
+$ terraform init
+$ terraform apply -auto-approve
+```
+
+### Create a Kubernetes cluster 
+Run a kubespray container and execute Ansible playbook:
 ```
 $ docker pull quay.io/kubespray/kubespray:v2.22.1
-```
-
-### (Option.1) Using dynamic inventory
-```
 $ docker run --rm -it \
   --mount type=bind,source="$(pwd)"/inventory,dst=/inventory \
   --mount type=bind,source="$(pwd)"/generate_inventory.py,dst=/kubespray/generate_inventory.py \
   --mount type=bind,source="$(pwd)"/terraform.tfstate,dst=/kubespray/terraform.tfstate \
   --mount type=bind,source="${HOME}"/.ssh/id_ed25519,dst=/root/.ssh/id_ed25519 \
   quay.io/kubespray/kubespray:v2.22.1 bash
-```
 
-Inside the container run:
-```
+# Inside the container run:
 $ ansible-playbook -i ./generate_inventory.py cluster.yml
 ```
 
-### (Option.2) Using static inventory
+FYI: The inventory information is extracted by `terraform output`:
+```
+$ terraform output -json | jq '.kubespray_hosts.value'
+```
+
+### (Optional) Generate a static inventory file
 ```
 $ ./generate_inventory.py | ./convert_inventory_to_yaml.sh > ./inventory/hosts.yaml
+```
+
+You also can create a kubernetes cluster by the `hosts.yaml`
+```
 $ docker run --rm -it \
   --mount type=bind,source="$(pwd)"/inventory,dst=/inventory \
   --mount type=bind,source="${HOME}"/.ssh/id_ed25519,dst=/root/.ssh/id_ed25519 \
   quay.io/kubespray/kubespray:v2.22.1 bash
-```
 
-Inside the container run:
-```
+# Inside the container
 $ ansible-playbook -i /inventory/hosts.yaml cluster.yml
 ```
