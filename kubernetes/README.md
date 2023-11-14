@@ -166,6 +166,10 @@ module "kubernetes" {
     },
   ]
 }
+
+output "kubespray_hosts" {
+    value = module.rook_ceph.kubespray_hosts
+}
 ```
 
 Then run the following to create VMs:
@@ -179,34 +183,34 @@ $ terraform apply -auto-approve
 Run a kubespray container and execute Ansible playbook:
 ```
 $ docker pull quay.io/kubespray/kubespray:v2.22.1
-$ docker run --rm -it \
+$ docker run --rm -i \
   --mount type=bind,source="$(pwd)"/inventory,dst=/inventory \
   --mount type=bind,source="$(pwd)"/generate_inventory.py,dst=/kubespray/generate_inventory.py \
   --mount type=bind,source="$(pwd)"/terraform.tfstate,dst=/kubespray/terraform.tfstate \
-  --mount type=bind,source="${HOME}"/.ssh/id_ed25519,dst=/root/.ssh/id_ed25519 \
-  quay.io/kubespray/kubespray:v2.22.1 bash
-
-# Inside the container run:
-$ ansible-playbook -i ./generate_inventory.py cluster.yml
+  --mount type=bind,source="${HOME}"/.ssh/id_rsa,dst=/root/.ssh/id_rsa \
+  quay.io/kubespray/kubespray:v2.22.1 bash <<EOS
+ansible-playbook -i ./generate_inventory.py cluster.yml
+EOF
 ```
 
 FYI: The inventory information is extracted by `terraform output`:
 ```
+./.terraform/modules/kubernetes/kubernetes/generate_inventory.py
 $ terraform output -json | jq '.kubespray_hosts.value'
 ```
 
 ### (Optional) Generate a static inventory file
 ```
-$ ./generate_inventory.py | ./convert_inventory_to_yaml.sh > ./inventory/hosts.yaml
+$ cp -rf .terraform/modules/kubernetes/kubernetes/inventory/ .
+$ ./.terraform/modules/kubernetes/kubernetes/generate_inventory.py | ./.terraform/modules/kubernetes/kubernetes/convert_inventory_to_yaml.sh > ./inventory/hosts.yaml
 ```
 
 You also can create a kubernetes cluster by the `hosts.yaml`
 ```
-$ docker run --rm -it \
+$ docker run --rm -i \
   --mount type=bind,source="$(pwd)"/inventory,dst=/inventory \
-  --mount type=bind,source="${HOME}"/.ssh/id_ed25519,dst=/root/.ssh/id_ed25519 \
-  quay.io/kubespray/kubespray:v2.22.1 bash
-
-# Inside the container
-$ ansible-playbook -i /inventory/hosts.yaml cluster.yml
+  --mount type=bind,source="${HOME}"/.ssh/id_rsa,dst=/root/.ssh/id_rsa \
+  quay.io/kubespray/kubespray:v2.22.1 bash <<EOF
+ansible-playbook -i /inventory/hosts.yaml cluster.yml
+EOF
 ```
