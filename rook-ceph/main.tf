@@ -19,11 +19,11 @@ module "kubernetes" {
     {
       name           = "storage1"
       vcpu           = 4
-      memory         = 16000                    # in MiB
+      memory         = 16384                    # in MiB
       disk           = 100 * 1024 * 1024 * 1024 # 100 GB
       ip             = "192.168.8.201"
       mac            = "52:54:00:00:02:01"
-      cloudinit_file = "cloud_init.cfg"
+      cloudinit_file = "${path.module}/cloud_init.cfg"
       description    = ""
       volumes = [
         {
@@ -42,8 +42,8 @@ module "kubernetes" {
     },
     {
       name           = "storage2"
-      vcpu           = 4
-      memory         = 16000                    # in MiB
+      vcpu           = 2
+      memory         = 16384                    # in MiB
       disk           = 100 * 1024 * 1024 * 1024 # 100 GB
       ip             = "192.168.8.202"
       mac            = "52:54:00:00:02:02"
@@ -63,7 +63,7 @@ module "kubernetes" {
     {
       name           = "storage3"
       vcpu           = 2
-      memory         = 8000                     # in MiB
+      memory         = 16384                    # in MiB
       disk           = 100 * 1024 * 1024 * 1024 # 100 GB
       ip             = "192.168.8.203"
       mac            = "52:54:00:00:02:03"
@@ -82,8 +82,8 @@ module "kubernetes" {
     },
     {
       name           = "app"
-      vcpu           = 2
-      memory         = 8000                     # in MiB
+      vcpu           = 4
+      memory         = 16284                    # in MiB
       disk           = 100 * 1024 * 1024 * 1024 # 100 GB
       ip             = "192.168.8.204"
       mac            = "52:54:00:00:02:04"
