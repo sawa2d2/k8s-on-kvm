@@ -174,6 +174,7 @@ $ terraform init
 $ terraform apply -auto-approve
 ```
 
+### Create a Kubernetes cluster 
 Run a kubespray container and execute Ansible playbook:
 ```
 $ docker pull quay.io/kubespray/kubespray:v2.22.1
