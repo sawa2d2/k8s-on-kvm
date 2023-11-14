@@ -188,9 +188,10 @@ $ docker run --rm -i \
   --mount type=bind,source="$(pwd)"/generate_inventory.py,dst=/kubespray/generate_inventory.py \
   --mount type=bind,source="$(pwd)"/terraform.tfstate,dst=/kubespray/terraform.tfstate \
   --mount type=bind,source="${HOME}"/.ssh/id_rsa,dst=/root/.ssh/id_rsa \
-  quay.io/kubespray/kubespray:v2.23.1 bash <<EOF
-ansible-playbook -i ./generate_inventory.py cluster.yml
-EOF
+  quay.io/kubespray/kubespray:v2.23.1 bash
+
+# Inside a container
+$ ansible-playbook -i ./generate_inventory.py cluster.yml
 ```
 
 FYI: The inventory information is extracted by `terraform output`:
@@ -207,10 +208,12 @@ $ ./.terraform/modules/kubernetes/kubernetes/generate_inventory.py | ./.terrafor
 
 You also can create a kubernetes cluster by the `hosts.yaml`
 ```
-$ docker run --rm -i \
+$ docker run --rm -it \
   --mount type=bind,source="$(pwd)"/inventory,dst=/inventory \
   --mount type=bind,source="${HOME}"/.ssh/id_rsa,dst=/root/.ssh/id_rsa \
-  quay.io/kubespray/kubespray:v2.23.1 bash <<EOF
-ansible-playbook -i /inventory/hosts.yaml cluster.yml
-EOF
+  quay.io/kubespray/kubespray:v2.23.1 bash
+
+# Inside a container
+$ ansible-playbook -i /inventory/hosts.yaml cluster.yml
 ```
+
