@@ -10,6 +10,11 @@ variable "bridge" {
   type = string
 }
 
+variable "pool" {
+  type    = string
+  default = "default"
+}
+
 variable "gateway" {
   type = string
 }

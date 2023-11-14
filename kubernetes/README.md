@@ -96,13 +96,14 @@ module "kubernetes" {
   # Download the image by:
   #   sudo curl -L -o /var/lib/libvirt/images/Rocky-9-GenericCloud.latest.x86_64.qcow2 https://download.rockylinux.org/pub/rocky/9.2/images/x86_64/Rocky-9-GenericCloud.latest.x86_64.qcow2 
   vm_base_image_uri = "/var/lib/libvirt/images/Rocky-9-GenericCloud.latest.x86_64.qcow2"
+  pool              = "default"
   
   bridge      = "br0"
   cidr        = "192.168.8.0/24"
   gateway     = "192.168.8.1"
   nameservers = ["192.168.8.1"]
   
-  vms = [
+  nodes = [
     {
       name           = "k8s-master-1"
       vcpu           = 4
@@ -165,6 +166,10 @@ module "kubernetes" {
     },
   ]
 }
+
+output "kubespray_hosts" {
+    value = module.rook_ceph.kubespray_hosts
+}
 ```
 
 Then run the following to create VMs:
@@ -177,35 +182,35 @@ $ terraform apply -auto-approve
 ### Create a Kubernetes cluster 
 Run a kubespray container and execute Ansible playbook:
 ```
-$ docker pull quay.io/kubespray/kubespray:v2.22.1
-$ docker run --rm -it \
+$ docker pull quay.io/kubespray/kubespray:v2.23.1
+$ docker run --rm -i \
   --mount type=bind,source="$(pwd)"/inventory,dst=/inventory \
   --mount type=bind,source="$(pwd)"/generate_inventory.py,dst=/kubespray/generate_inventory.py \
   --mount type=bind,source="$(pwd)"/terraform.tfstate,dst=/kubespray/terraform.tfstate \
-  --mount type=bind,source="${HOME}"/.ssh/id_ed25519,dst=/root/.ssh/id_ed25519 \
-  quay.io/kubespray/kubespray:v2.22.1 bash
-
-# Inside the container run:
-$ ansible-playbook -i ./generate_inventory.py cluster.yml
+  --mount type=bind,source="${HOME}"/.ssh/id_rsa,dst=/root/.ssh/id_rsa \
+  quay.io/kubespray/kubespray:v2.23.1 bash <<EOF
+ansible-playbook -i ./generate_inventory.py cluster.yml
+EOF
 ```
 
 FYI: The inventory information is extracted by `terraform output`:
 ```
+./.terraform/modules/kubernetes/kubernetes/generate_inventory.py
 $ terraform output -json | jq '.kubespray_hosts.value'
 ```
 
 ### (Optional) Generate a static inventory file
 ```
-$ ./generate_inventory.py | ./convert_inventory_to_yaml.sh > ./inventory/hosts.yaml
+$ cp -rf .terraform/modules/kubernetes/kubernetes/inventory/ .
+$ ./.terraform/modules/kubernetes/kubernetes/generate_inventory.py | ./.terraform/modules/kubernetes/kubernetes/convert_inventory_to_yaml.sh > ./inventory/hosts.yaml
 ```
 
 You also can create a kubernetes cluster by the `hosts.yaml`
 ```
-$ docker run --rm -it \
+$ docker run --rm -i \
   --mount type=bind,source="$(pwd)"/inventory,dst=/inventory \
-  --mount type=bind,source="${HOME}"/.ssh/id_ed25519,dst=/root/.ssh/id_ed25519 \
-  quay.io/kubespray/kubespray:v2.22.1 bash
-
-# Inside the container
-$ ansible-playbook -i /inventory/hosts.yaml cluster.yml
+  --mount type=bind,source="${HOME}"/.ssh/id_rsa,dst=/root/.ssh/id_rsa \
+  quay.io/kubespray/kubespray:v2.23.1 bash <<EOF
+ansible-playbook -i /inventory/hosts.yaml cluster.yml
+EOF
 ```
