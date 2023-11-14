@@ -183,7 +183,7 @@ $ terraform apply -auto-approve
 Run a kubespray container and execute Ansible playbook:
 ```
 $ docker pull quay.io/kubespray/kubespray:v2.23.1
-$ docker run --rm -i \
+$ sudo docker run --rm -it \
   --mount type=bind,source="$(pwd)"/inventory,dst=/inventory \
   --mount type=bind,source="$(pwd)"/generate_inventory.py,dst=/kubespray/generate_inventory.py \
   --mount type=bind,source="$(pwd)"/terraform.tfstate,dst=/kubespray/terraform.tfstate \
@@ -196,19 +196,19 @@ $ ansible-playbook -i ./generate_inventory.py cluster.yml
 
 FYI: The inventory information is extracted by `terraform output`:
 ```
-./.terraform/modules/kubernetes/kubernetes/generate_inventory.py
+.terraform/modules/kubernetes/kubernetes/generate_inventory.py
 $ terraform output -json | jq '.kubespray_hosts.value'
 ```
 
 ### (Optional) Generate a static inventory file
 ```
 $ cp -rf .terraform/modules/kubernetes/kubernetes/inventory/ .
-$ ./.terraform/modules/kubernetes/kubernetes/generate_inventory.py | ./.terraform/modules/kubernetes/kubernetes/convert_inventory_to_yaml.sh > ./inventory/hosts.yaml
+$ .terraform/modules/kubernetes/kubernetes/generate_inventory.py | .terraform/modules/kubernetes/kubernetes/convert_inventory_to_yaml.sh > ./inventory/hosts.yaml
 ```
 
 You also can create a kubernetes cluster by the `hosts.yaml`
 ```
-$ docker run --rm -it \
+$ sudo docker run --rm -it \
   --mount type=bind,source="$(pwd)"/inventory,dst=/inventory \
   --mount type=bind,source="${HOME}"/.ssh/id_rsa,dst=/root/.ssh/id_rsa \
   quay.io/kubespray/kubespray:v2.23.1 bash
