@@ -1,5 +1,7 @@
 # Rook-Ceph
 
+Here is a sample code of this article {TBD}.
+
 ## Summary
 
 ![Network architecture](./images/network_architecture.drawio.png)
