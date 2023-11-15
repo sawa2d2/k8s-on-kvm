@@ -66,10 +66,32 @@ nmcli connection up bridge-br0
 It illustrates a change from 'Before' to 'After' as demonstrated in the diagram below:
 ![dynamic_inventory](./images/network-diff.drawio.png)
 
-Download a qcow2 image file of Rocky Linux 8.8 to the default pool of livbirt `/var/lib/libvirt/images/`:
-
+Check if the default pool of libvirt `/var/lib/libvirt/images/` exists:
 ```
-$ sudo curl -L -o /var/lib/libvirt/images/Rocky-9-GenericCloud.latest.x86_64.qcow2 https://download.rockylinux.org/pub/rocky/8.8/images/x86_64/Rocky-8-GenericCloud.latest.x86_64.qcow2
+$ virsh pool-list --all
+ Name      State    Autostart
+-------------------------------
+ default   active   yes
+```
+
+If it does not exist, create it:
+```
+$ virsh pool-define /dev/stdin <<EOF
+<pool type='dir'>
+  <name>default</name>
+  <target>
+    <path>/var/lib/libvirt/images</path>
+  </target>
+</pool>
+EOF
+
+$ virsh pool-start default
+$ virsh pool-autostart default
+```
+
+Download a qcow2 image of base OS (e.g. Rocky Linux 9) to the default pool:
+```
+$ sudo curl -L -o /var/lib/libvirt/images/Rocky-9-GenericCloud.latest.x86_64.qcow2 https://download.rockylinux.org/pub/rocky/9.2/images/x86_64/Rocky-9-GenericCloud.latest.x86_64.qcow2
 ```
 
 Edit `cloud_init.cfg` to set your ssh public key:
@@ -180,35 +202,16 @@ $ terraform apply -auto-approve
 ```
 
 ### Create a Kubernetes cluster 
-Run a kubespray container and execute Ansible playbook:
-```
-$ docker pull quay.io/kubespray/kubespray:v2.23.1
-$ docker run --rm -i \
-  --mount type=bind,source="$(pwd)"/inventory,dst=/inventory \
-  --mount type=bind,source="$(pwd)"/generate_inventory.py,dst=/kubespray/generate_inventory.py \
-  --mount type=bind,source="$(pwd)"/terraform.tfstate,dst=/kubespray/terraform.tfstate \
-  --mount type=bind,source="${HOME}"/.ssh/id_rsa,dst=/root/.ssh/id_rsa \
-  quay.io/kubespray/kubespray:v2.23.1 bash
-
-# Inside a container
-$ ansible-playbook -i ./generate_inventory.py cluster.yml
-```
-
-FYI: The inventory information is extracted by `terraform output`:
-```
-./.terraform/modules/kubernetes/kubernetes/generate_inventory.py
-$ terraform output -json | jq '.kubespray_hosts.value'
-```
-
-### (Optional) Generate a static inventory file
+Copy inventory files and generate hosts.yaml file:
 ```
 $ cp -rf .terraform/modules/kubernetes/kubernetes/inventory/ .
-$ ./.terraform/modules/kubernetes/kubernetes/generate_inventory.py | ./.terraform/modules/kubernetes/kubernetes/convert_inventory_to_yaml.sh > ./inventory/hosts.yaml
+$ .terraform/modules/kubernetes/kubernetes/generate_inventory.py | .terraform/modules/kubernetes/kubernetes/convert_inventory_to_yaml.sh > ./inventory/hosts.yaml
 ```
 
-You also can create a kubernetes cluster by the `hosts.yaml`
+Create a Kubernetes cluster:
 ```
-$ docker run --rm -it \
+$ docker pull quay.io/kubespray/kubespray:v2.23.1
+$ sudo docker run --rm -it \
   --mount type=bind,source="$(pwd)"/inventory,dst=/inventory \
   --mount type=bind,source="${HOME}"/.ssh/id_rsa,dst=/root/.ssh/id_rsa \
   quay.io/kubespray/kubespray:v2.23.1 bash
