@@ -77,7 +77,7 @@ resource "libvirt_domain" "vm" {
 
   # Public network
   network_interface {
-    bridge = var.bridge
+    bridge    = var.bridge
     addresses = [var.vms[count.index].public_ip]
     mac       = local.cluster_mac_addrs[count.index]
   }
@@ -85,8 +85,8 @@ resource "libvirt_domain" "vm" {
   # Private network
   network_interface {
     network_name = "default"
-    addresses = [var.vms[count.index].private_ip]
-    mac       = local.private_mac_addrs[count.index]
+    addresses    = [var.vms[count.index].private_ip]
+    mac          = local.private_mac_addrs[count.index]
   }
 
   qemu_agent = true
