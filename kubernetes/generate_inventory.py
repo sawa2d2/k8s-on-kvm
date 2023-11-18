@@ -15,11 +15,12 @@ def main():
     for host in hosts:
         name = host['name']
         ip = host['ip']
+        access_ip = host['access_ip']
         hostvars.update({
           name: {
-              "ansible_host": ip,
+              "ansible_host": access_ip,
               "ip": ip,
-              "access_ip": ip,
+              #"access_ip": access_ip,
           }
         })
         if host["kube_control_plane"]:
@@ -51,10 +52,10 @@ def main():
 
 
 def get_hosts():
-    cmd = ['terraform', 'output', '-json']
-    res = subprocess.run(cmd, stdout=subprocess.PIPE, text=True)
-    res_json = json.loads(res.stdout)
-    return res_json['kubespray_hosts']['value']
+    tfstate_path = './terraform.tfstate'
+    with open(tfstate_path) as f:
+        tfstate = json.load(f)
+    return tfstate['outputs']['kubespray_hosts']['value']
 
 
 main()

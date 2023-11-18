@@ -202,21 +202,37 @@ $ terraform apply -auto-approve
 ```
 
 ### Create a Kubernetes cluster 
-Copy inventory files and generate hosts.yaml file:
+Copy inventory files:
 ```
 $ cp -rf .terraform/modules/kubernetes/kubernetes/inventory/ .
+```
+
+Run a kubespray container and execute Ansible playbook:
+```
+$ docker pull quay.io/kubespray/kubespray:v2.23.1
+$ sudo docker run --rm -i \
+  --mount type=bind,source="$(pwd)"/inventory,dst=/inventory \
+  --mount type=bind,source="$(pwd)"/generate_inventory.py,dst=/kubespray/generate_inventory.py \
+  --mount type=bind,source="$(pwd)"/terraform.tfstate,dst=/kubespray/terraform.tfstate \
+  --mount type=bind,source="${HOME}"/.ssh/id_rsa,dst=/root/.ssh/id_rsa \
+  quay.io/kubespray/kubespray:v2.23.1 bash <<EOF
+ansible-playbook -i ./generate_inventory.py cluster.yml
+EOF
+```
+
+## (FYI) Create cluster by using static inventory
+Generate hosts.yaml file:
+```
 $ .terraform/modules/kubernetes/kubernetes/generate_inventory.py | .terraform/modules/kubernetes/kubernetes/convert_inventory_to_yaml.sh > ./inventory/hosts.yaml
 ```
 
 Create a Kubernetes cluster:
 ```
-$ docker pull quay.io/kubespray/kubespray:v2.23.1
 $ sudo docker run --rm -it \
   --mount type=bind,source="$(pwd)"/inventory,dst=/inventory \
   --mount type=bind,source="${HOME}"/.ssh/id_rsa,dst=/root/.ssh/id_rsa \
-  quay.io/kubespray/kubespray:v2.23.1 bash
-
-# Inside a container
-$ ansible-playbook -i /inventory/hosts.yaml cluster.yml
+  quay.io/kubespray/kubespray:v2.23.1 bash <<EOF
+ansible-playbook -i /inventory/hosts.yaml cluster.yml
+EOF
 ```
 

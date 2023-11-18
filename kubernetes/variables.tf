@@ -10,11 +10,6 @@ variable "bridge" {
   type = string
 }
 
-variable "pool" {
-  type    = string
-  default = "default"
-}
-
 variable "gateway" {
   type = string
 }
@@ -27,16 +22,20 @@ variable "nameservers" {
   type = list(string)
 }
 
-variable "nodes" {
+variable "pool" {
+  type    = string
+  default = "default"
+}
+
+variable "vms" {
   type = list(
     object({
       name           = string
       vcpu           = number
       memory         = number
       disk           = number
-      ip             = string
-      mac            = string
-      description    = string
+      cluster_ip     = string
+      private_ip     = string
       cloudinit_file = string
       volumes = list(
         object({
