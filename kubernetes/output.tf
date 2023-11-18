@@ -6,7 +6,7 @@ locals {
         for key, value in vm : key => value if contains(local.kubespray_hosts_keys, key)
       },
       {
-        ip        = vm.cluster_ip
+        ip        = vm.public_ip
         access_ip = vm.private_ip
     })
   ]

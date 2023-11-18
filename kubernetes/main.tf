@@ -5,7 +5,7 @@ locals {
   cluster_nameservers_string = "[\"${join("\", \"", var.nameservers)}\"]"
 
   # Auto-calculate mac address from IP 
-  cluster_ips_parts = [for vm in var.vms : split(".", vm.cluster_ip)]
+  cluster_ips_parts = [for vm in var.vms : split(".", vm.public_ip)]
   cluster_mac_addrs = [
     for ip_parts in local.cluster_ips_parts : format(
       "52:54:00:%02X:%02X:%02X",
@@ -34,7 +34,7 @@ data "template_file" "network_config" {
   count    = length(var.vms)
   template = file("${path.module}/network_config.cfg")
   vars = {
-    ip          = var.vms[count.index].cluster_ip
+    ip          = var.vms[count.index].public_ip
     cidr_prefix = local.cluster_cidr_prefix
     gateway     = var.gateway
     nameservers = local.cluster_nameservers_string
@@ -75,20 +75,18 @@ resource "libvirt_domain" "vm" {
   cloudinit = libvirt_cloudinit_disk.commoninit[count.index].id
   autostart = true
 
-  # Cluster network
+  # Public network
   network_interface {
-    bridge    = var.bridge
-    #hostname  = var.vms[count.index].name
-    addresses = [var.vms[count.index].cluster_ip]
+    bridge = var.bridge
+    addresses = [var.vms[count.index].public_ip]
     mac       = local.cluster_mac_addrs[count.index]
   }
 
   # Private network
   network_interface {
     network_name = "default"
-    #hostname     = var.vms[count.index].name
-    addresses    = [var.vms[count.index].private_ip]
-    mac          = local.private_mac_addrs[count.index]
+    addresses = [var.vms[count.index].private_ip]
+    mac       = local.private_mac_addrs[count.index]
   }
 
   qemu_agent = true

@@ -20,7 +20,6 @@ def main():
           name: {
               "ansible_host": access_ip,
               "ip": ip,
-              #"access_ip": access_ip,
           }
         })
         if host["kube_control_plane"]:

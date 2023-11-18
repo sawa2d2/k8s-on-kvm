@@ -34,7 +34,7 @@ variable "vms" {
       vcpu           = number
       memory         = number
       disk           = number
-      cluster_ip     = string
+      public_ip      = string
       private_ip     = string
       cloudinit_file = string
       volumes = list(
