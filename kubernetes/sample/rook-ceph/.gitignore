@@ -1,2 +1,3 @@
-inventory/credentials
-inventory/hosts.yaml
+*/inventory/credentials/
+*/inventory/hosts.yaml
+deploy
