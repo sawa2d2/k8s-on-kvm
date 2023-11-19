@@ -40,9 +40,6 @@ def main():
                 "kube_control_plane",
                 "kube_node",
             ]
-        },
-        "calico_rr": {
-            "hosts": {}
         }
     }
 

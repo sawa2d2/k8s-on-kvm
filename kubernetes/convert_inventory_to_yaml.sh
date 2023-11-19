@@ -8,7 +8,6 @@ yq -P eval '
 .children.kube_node.hosts = .kube_node |
 .children.etcd.hosts = .etcd  |
 .children.k8s_cluster = .k8s_cluster |
-.children.calico_rr = .calico_rr |
 del(.kube_control_plane, .kube_node, .etcd, .k8s_cluster, .calico_rr) |
 .all.hosts = .hosts |
 .all.children = .children |
