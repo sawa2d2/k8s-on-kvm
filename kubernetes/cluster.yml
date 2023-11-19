@@ -1,7 +1,7 @@
 ---
 # This role assumes to call Kubespray's `playbooks/cluster`.
-- name: Install Kubernetes
-  ansible.builtin.import_playbook: playbooks/cluster.yml
+#- name: Install Kubernetes
+#  ansible.builtin.import_playbook: playbooks/cluster.yml
 
 - name: Registernqualified
   hosts: all
@@ -24,4 +24,8 @@
         src: /etc/kubernetes/admin.conf
         dest: ~/.kube/admin.conf
         flat: yes
-
+    - delegate_to: localhost
+      ansible.builtin.replace:
+        path: ~/.kube/admin.conf
+        regexp: '127.0.0.1'
+        replace: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
