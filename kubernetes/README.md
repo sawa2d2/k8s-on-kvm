@@ -127,10 +127,13 @@ $ sudo docker run --rm -i \
   --mount type=bind,source="$(pwd)"/inventory,dst=/inventory \
   --mount type=bind,source="$(pwd)"/.terraform/modules/kubernetes/kubernetes/generate_inventory.py,dst=/kubespray/generate_inventory.py \
   --mount type=bind,source="$(pwd)"/terraform.tfstate,dst=/kubespray/terraform.tfstate \
+  --mount type=bind,source="$(pwd)"/.terraform/modules/kubernetes/kubernetes/cluster.yml,dst=/kubespray/cluster.yml \
+  --mount type=bind,source="${HOME}"/.kube,dst=/root/.kube \
   --mount type=bind,source="${HOME}"/.ssh/id_rsa,dst=/root/.ssh/id_rsa \
-  quay.io/kubespray/kubespray:v2.23.1 bash <<EOF
+  quay.io/kubespray/kubespray:v2.23.1 bash
+
+# Inside a container
 ansible-playbook -i ./generate_inventory.py cluster.yml
-EOF
 ```
 
 ## (FYI) Create cluster by using static inventory
@@ -143,9 +146,12 @@ Create a Kubernetes cluster:
 ```
 $ sudo docker run --rm -it \
   --mount type=bind,source="$(pwd)"/inventory,dst=/inventory \
+  --mount type=bind,source="$(pwd)"/cluster.yml,dst=/kubespray/cluster.yml \
+  --mount type=bind,source="${HOME}"/.kube,dst=/root/.kube \
   --mount type=bind,source="${HOME}"/.ssh/id_rsa,dst=/root/.ssh/id_rsa \
-  quay.io/kubespray/kubespray:v2.23.1 bash <<EOF
+  quay.io/kubespray/kubespray:v2.23.1 bash
+
+# Inside a container
 ansible-playbook -i /inventory/hosts.yaml cluster.yml
-EOF
 ```
 
