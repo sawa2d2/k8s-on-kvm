@@ -1,7 +1,7 @@
 ---
 # This role assumes to call Kubespray's `playbooks/cluster`.
-#- name: Install Kubernetes
-#  ansible.builtin.import_playbook: playbooks/cluster.yml
+- name: Install Kubernetes
+  ansible.builtin.import_playbook: playbooks/cluster.yml
 
 - name: Registernqualified
   hosts: all
