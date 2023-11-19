@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import json
-import subprocess
 
 
 def main():
@@ -15,11 +14,11 @@ def main():
     for host in hosts:
         name = host['name']
         ip = host['ip']
+        access_ip = host['access_ip']
         hostvars.update({
           name: {
-              "ansible_host": ip,
+              "ansible_host": access_ip,
               "ip": ip,
-              "access_ip": ip,
           }
         })
         if host["kube_control_plane"]:
@@ -41,9 +40,6 @@ def main():
                 "kube_control_plane",
                 "kube_node",
             ]
-        },
-        "calico_rr": {
-            "hosts": {}
         }
     }
 
@@ -51,10 +47,10 @@ def main():
 
 
 def get_hosts():
-    cmd = ['terraform', 'output', '-json']
-    res = subprocess.run(cmd, stdout=subprocess.PIPE, text=True)
-    res_json = json.loads(res.stdout)
-    return res_json['kubespray_hosts']['value']
+    tfstate_path = './terraform.tfstate'
+    with open(tfstate_path) as f:
+        tfstate = json.load(f)
+    return tfstate['outputs']['kubespray_hosts']['value']
 
 
 main()
