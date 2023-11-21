@@ -46,6 +46,7 @@ resource "libvirt_cloudinit_disk" "commoninit" {
   name           = "commoninit_${var.vms[count.index].name}.iso"
   user_data      = data.template_file.user_data[count.index].rendered
   network_config = data.template_file.network_config[count.index].rendered
+  pool           = var.pool
 }
 
 locals {
