@@ -117,7 +117,7 @@ $ terraform apply -auto-approve
 ### Create a Kubernetes cluster 
 Copy inventory files:
 ```
-$ cp -rf .terraform/modules/kubernetes/kubernetes/inventory/ .
+$ cp -rf .terraform/modules/kubernetes/kubernetes/inventory .
 ```
 
 Run a kubespray container and execute Ansible playbook:
@@ -133,7 +133,7 @@ $ docker run --rm -it \
   quay.io/kubespray/kubespray:v2.23.1 bash
 
 # Inside a container
-ansible-playbook -i ./generate_inventory.py cluster.yml
+ansible-playbook -i generate_inventory.py cluster.yml
 ```
 
 ## (FYI) Create cluster by using static inventory
