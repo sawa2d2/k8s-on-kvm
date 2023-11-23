@@ -150,6 +150,7 @@ You can see status of HAProxy via http://localhost:8080/ and login by `admin:tes
 Create `install-config.yaml` as below:
 
 ```
+---
 apiVersion: v1
 baseDomain: example.com
 compute:
@@ -164,8 +165,8 @@ metadata:
   name: ocp4
 networking:
   clusterNetwork:
-  - cidr: 192.168.126.0/24
-    hostPrefix: 64
+  - cidr: 10.128.0.0/14
+    hostPrefix: 23
   serviceNetwork:
   - 172.30.0.0/16
   machineNetwork:
@@ -184,8 +185,7 @@ cp install-config.yaml install-config.yaml.backup
 
 Generate ignition files:
 ```
-cp install-config.yaml.backup install-config.yaml
-openshift-install create ignition-configs
+cp install-config.yaml.backup install-config.yaml && openshift-install create ignition-configs
 ```
 
 ## Create a bootstrap node
