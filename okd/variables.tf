@@ -5,9 +5,7 @@ variable "bootstrap" {
     memory        = number
     disk          = number
     ip            = string
-    mac           = string
     ignition_file = string
-    description   = string
     volumes = list(
       object({
         name = string
@@ -25,9 +23,7 @@ variable "masters" {
       memory        = number
       disk          = number
       ip            = string
-      mac           = string
       ignition_file = string
-      description   = string
       volumes = list(
         object({
           name = string
@@ -46,9 +42,7 @@ variable "workers" {
       memory        = number
       disk          = number
       ip            = string
-      mac           = string
       ignition_file = string
-      description   = string
       volumes = list(
         object({
           name = string

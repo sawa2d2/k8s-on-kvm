@@ -22,9 +22,7 @@ bootstrap = {
   memory        = 16384                    # in MiB
   disk          = 100 * 1024 * 1024 * 1024 # 100 GB
   ip            = "192.168.126.100"
-  mac           = "52:54:00:00:00:00"
   ignition_file = "bootstrap.ign"
-  description   = ""
   volumes       = []
 }
 
@@ -32,12 +30,10 @@ masters = [
   {
     name          = "master0"
     vcpu          = 4
-    memory        = 16284                    # in MiB
+    memory        = 16384                    # in MiB
     disk          = 100 * 1024 * 1024 * 1024 # 100 GB
     ip            = "192.168.126.101"
-    mac           = "52:54:00:00:00:01"
     ignition_file = "master.ign"
-    description   = ""
     volumes       = []
   },
   {
@@ -46,9 +42,7 @@ masters = [
     memory        = 16384                    # in MiB
     disk          = 100 * 1024 * 1024 * 1024 # 100 GB
     ip            = "192.168.126.102"
-    mac           = "52:54:00:00:00:02"
     ignition_file = "master.ign"
-    description   = ""
     volumes       = []
   },
   {
@@ -57,9 +51,7 @@ masters = [
     memory        = 16384                    # in MiB
     disk          = 100 * 1024 * 1024 * 1024 # 100 GB
     ip            = "192.168.126.103"
-    mac           = "52:54:00:00:00:03"
     ignition_file = "master.ign"
-    description   = ""
     volumes       = []
   },
 ]
@@ -71,9 +63,7 @@ workers = [
     memory        = 8192                     # in MiB
     disk          = 100 * 1024 * 1024 * 1024 # 100 GB
     ip            = "192.168.126.104"
-    mac           = "52:54:00:00:00:04"
     ignition_file = "worker.ign"
-    description   = ""
     volumes       = []
   },
   {
@@ -82,9 +72,7 @@ workers = [
     memory        = 8192                     # in MiB
     disk          = 100 * 1024 * 1024 * 1024 # 100 GB
     ip            = "192.168.126.105"
-    mac           = "52:54:00:00:00:05"
     ignition_file = "worker.ign"
-    description   = ""
     volumes       = []
   },
 ]
