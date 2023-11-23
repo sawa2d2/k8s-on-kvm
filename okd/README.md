@@ -37,7 +37,7 @@ terraform init
 
 Create a network for okd:
 ```
-terraform apply -auto-approve -target=module.okd.module.network
+terraform apply -auto-approve -target=module.okd.libvirt_network.network
 ```
 
 Enable to use libvirt's DNS from the host:
@@ -232,7 +232,7 @@ terraform destroy -auto-approve -target=module.okd.module.bootstrap
 
 Update DNS of the network:
 ```
-terraform apply -auto-approve -target=module.okd.module.network -var="exclude_bootstrap=true"
+terraform apply -auto-approve -target=module.okd.libvirt_network.network -var="exclude_bootstrap=true"
 ```
 
 ## Cleanup
