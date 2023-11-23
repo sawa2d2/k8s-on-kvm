@@ -24,19 +24,8 @@ The network configuration in this repository is as shown in the diagram below:
 - KVM Packages
   - `qemu-kvm`
   - `libvirt`
-
-
-`openshift-install`:
-```
-$ curl -LO https://github.com/okd-project/okd/releases/download/3.14.0-0.okd-2023-10-28-073550/openshift-install-linux-4.14.0-0.okd-2023-10-28-073550.tar.gz
-$ tar -zxvf openshift-install-linux-4.14.0-0.okd-2023-10-28-073550.tar.gz
-$ mv openshift-install /usr/local/bin
-$ openshift-install version
-openshift-install 4.14.0-0.okd-2023-10-28-073550
-built from commit 03546e550ae68f6b36d78d78b539450e66b5f6c2
-release image quay.io/openshift/okd@sha256:7a6200e347a1b857e47f2ab0735eb1303af7d796a847d79ef9706f217cd12f5c
-release architecture amd64
-```
+- [`openshift-install`](https://github.com/okd-project/okd/releases)
+- [`oc`](https://github.com/okd-project/okd/releases)
 
 ## Hot to use this Terraform module
 Copy [sample/main.tf](./sample/main.tf) to your project root.
