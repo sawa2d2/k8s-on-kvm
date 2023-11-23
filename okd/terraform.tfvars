@@ -1,4 +1,13 @@
-libvirt_uri                = "qemu:///system"
+## Localhost:
+# libvirt_uri = "qemu:///system"
+## Remote:
+# libvirt_uri = "qemu+ssh://<user>@<remote-host>/system?keyfile=${local.user_home_directory}/.ssh/id_rsa&known_hosts_verify=ignore"
+## Remote via bastion:
+##   Forward port in advance.
+##   $ ssh -C -N -f -L 50000:<remote-user>@<remote-host>:22 <bastion-host> -p <bastion-port>
+# libvirt_uri = "qemu+ssh://<remote-user>@localhost:50000/system?keyfile=${local.user_home_directory}/.ssh/id_rsa&known_hosts_verify=ignore"
+libvirt_uri = "qemu:///system"
+
 domain                     = "ocp4.example.com"
 network_name               = "okd"
 bridge_name                = "tt0"
@@ -13,7 +22,6 @@ load_balancer_ip           = "192.168.126.5"
 #   openshift-install 4.14.0-0.okd-2023-10-28-073550
 #   $ wget $(openshift-install coreos print-stream-json | jq -r '.architectures.x86_64.artifacts.qemu.formats["qcow2.xz"].disk.location')
 #   $ xz -dv *.qcow2.xz
-#vm_base_image_uri = "/var/lib/libvirt/images/fedora-coreos-38.20230609.3.0-qemu.x86_64.qcow2"
 vm_base_image_uri = "/var/lib/libvirt/images/fedora-coreos-38.20231002.3.1-qemu.x86_64.qcow2"
 
 bootstrap = {
