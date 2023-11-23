@@ -73,6 +73,7 @@ module "bootstrap" {
   source = "github.com/sawa2d2/terraform-modules//libvirt-ignition-nat/"
 
   libvirt_uri       = var.libvirt_uri
+  pool              = var.pool
   vm_base_image_uri = var.vm_base_image_uri
   network_name      = var.network_name
   vms               = [var.bootstrap]
@@ -82,6 +83,7 @@ module "cluster" {
   source = "github.com/sawa2d2/terraform-modules//libvirt-ignition-nat/"
 
   libvirt_uri       = var.libvirt_uri
+  pool              = var.pool
   vm_base_image_uri = var.vm_base_image_uri
   network_name      = var.network_name
   vms               = concat(var.masters, var.workers)

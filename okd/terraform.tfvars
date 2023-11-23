@@ -22,6 +22,7 @@ load_balancer_ip           = "192.168.126.5"
 #   openshift-install 4.14.0-0.okd-2023-10-28-073550
 #   $ wget $(openshift-install coreos print-stream-json | jq -r '.architectures.x86_64.artifacts.qemu.formats["qcow2.xz"].disk.location')
 #   $ xz -dv *.qcow2.xz
+pool              = "default"
 vm_base_image_uri = "/var/lib/libvirt/images/fedora-coreos-38.20231002.3.1-qemu.x86_64.qcow2"
 
 bootstrap = {

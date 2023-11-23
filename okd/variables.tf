@@ -76,6 +76,11 @@ variable "libvirt_uri" {
   default = "qemu:///system"
 }
 
+variable "pool" {
+  type    = string
+  default = "default"
+}
+
 variable "vm_base_image_uri" {
   type = string
 }
