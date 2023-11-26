@@ -15,3 +15,7 @@ locals {
 output "kubespray_hosts" {
   value = local.kubespray_hosts
 }
+
+output "libvirt_uri" {
+  value = var.libvirt_uri
+}

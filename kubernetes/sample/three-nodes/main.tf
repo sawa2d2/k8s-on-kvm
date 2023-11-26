@@ -2,24 +2,38 @@ output "kubespray_hosts" {
   value = module.kubernetes.kubespray_hosts
 }
 
+output "libvirt_uri" {
+  value = module.kubernetes.libvirt_uri
+}
+
+locals {
+  user_home_directory = pathexpand("~")
+}
+
 module "kubernetes" {
   source = "github.com/sawa2d2/k8s-on-kvm//kubernetes/"
 
-  # Localhost: "qemu:///system"
-  # Remote   : "qemu+ssh://<user>@<host>/system"
+  ## Localhost:
+  # libvirt_uri = "qemu:///system"
+  ## Remote:
+  # libvirt_uri = "qemu+ssh://<user>@<remote-host>/system?keyfile=${local.user_home_directory}/.ssh/id_rsa&known_hosts_verify=ignore"
+  ## Remote via bastion:
+  ##   Forward port in advance.
+  ##   $ ssh -C -N -f -L 50000:<remote-user>@<remote-host>:22 <bastion-host> -p <bastion-port>
+  # libvirt_uri = "qemu+ssh://<remote-user>@localhost:50000/system?keyfile=${local.user_home_directory}/.ssh/id_rsa&known_hosts_verify=ignore"
   libvirt_uri = "qemu:///system"
-  
+
   # Download the image by:
   #   sudo curl -L -o /var/lib/libvirt/images/Rocky-9-GenericCloud.latest.x86_64.qcow2 https://download.rockylinux.org/pub/rocky/9.2/images/x86_64/Rocky-9-GenericCloud.latest.x86_64.qcow2 
   vm_base_image_uri = "/var/lib/libvirt/images/Rocky-9-GenericCloud.latest.x86_64.qcow2"
   pool              = "default"
-  
+
   # Cluster network
   bridge      = "br0"
   cidr        = "192.168.8.0/24"
   gateway     = "192.168.8.1"
   nameservers = ["192.168.8.1"]
-  
+
   vms = [
     {
       name           = "k8s-master-1"
@@ -30,7 +44,7 @@ module "kubernetes" {
       private_ip     = "192.168.122.201"
       cloudinit_file = "cloud_init.cfg"
       volumes        = []
-  
+
       kube_control_plane = true
       kube_node          = true
       etcd               = true
@@ -44,7 +58,7 @@ module "kubernetes" {
       private_ip     = "192.168.122.202"
       cloudinit_file = "cloud_init.cfg"
       volumes        = []
-  
+
       kube_control_plane = false
       kube_node          = true
       etcd               = false
@@ -58,7 +72,7 @@ module "kubernetes" {
       private_ip     = "192.168.122.203"
       cloudinit_file = "cloud_init.cfg"
       volumes        = []
-  
+
       kube_control_plane = false
       kube_node          = true
       etcd               = false

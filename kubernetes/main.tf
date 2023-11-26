@@ -28,6 +28,9 @@ locals {
 data "template_file" "user_data" {
   count    = length(var.vms)
   template = file(var.vms[count.index].cloudinit_file)
+  vars = {
+    hostname = var.vms[count.index].name
+  }
 }
 
 data "template_file" "network_config" {

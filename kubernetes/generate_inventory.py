@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 
 import json
+import re
 
 
 def main():
-    hosts = get_hosts()
+    output = get_outputs()
+    hosts = output['kubespray_hosts']['value']
+    libvirt_uri = output['libvirt_uri']['value']
 
     hostvars = {}
     kube_control_plane = []
@@ -21,6 +24,16 @@ def main():
               "ip": ip,
           }
         })
+        # Check hostname
+        regex = r"^qemu(\+ssh)?://([^/]*)/.*"
+        res = re.match(regex, libvirt_uri)
+        if res:
+          hostname = res[2]
+          if hostname != "":
+            hostvars[name].update({
+              "ansible_ssh_common_args": f"-J {hostname}"
+          })
+
         if host["kube_control_plane"]:
             kube_control_plane.append(name)
         if host["kube_node"]:
@@ -43,14 +56,15 @@ def main():
         }
     }
 
+
     print(json.dumps(inventory))
 
 
-def get_hosts():
+def get_outputs():
     tfstate_path = './terraform.tfstate'
     with open(tfstate_path) as f:
         tfstate = json.load(f)
-    return tfstate['outputs']['kubespray_hosts']['value']
+    return tfstate['outputs']
 
 
 main()
