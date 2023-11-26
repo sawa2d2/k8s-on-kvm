@@ -2,6 +2,14 @@ output "kubespray_hosts" {
   value = module.kubernetes.kubespray_hosts
 }
 
+output "libvirt_uri" {
+    value = module.kubernetes.libvirt_uri
+}
+
+locals {
+    user_home_directory = pathexpand("~")
+}
+
 module "kubernetes" {
   source = "github.com/sawa2d2/k8s-on-kvm//kubernetes/"
 
