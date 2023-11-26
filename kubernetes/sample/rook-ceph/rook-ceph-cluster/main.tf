@@ -23,8 +23,8 @@ module "kubernetes" {
   vms = [
     {
       name           = "storage1"
-      vcpu           = 4
-      memory         = 24576                    # in MiB
+      vcpu           = 2
+      memory         = 8192                     # in MiB
       disk           = 100 * 1024 * 1024 * 1024 # 100 GB
       public_ip      = "192.168.8.201"
       private_ip     = "192.168.122.201"
@@ -46,8 +46,8 @@ module "kubernetes" {
     },
     {
       name           = "storage2"
-      vcpu           = 4
-      memory         = 8192                     # in MiB
+      vcpu           = 1
+      memory         = 4096                     # in MiB
       disk           = 100 * 1024 * 1024 * 1024 # 100 GB
       public_ip      = "192.168.8.202"
       private_ip     = "192.168.122.202"
@@ -65,8 +65,8 @@ module "kubernetes" {
     },
     {
       name           = "storage3"
-      vcpu           = 2
-      memory         = 8192                     # in MiB
+      vcpu           = 1
+      memory         = 4096                     # in MiB
       disk           = 100 * 1024 * 1024 * 1024 # 100 GB
       public_ip      = "192.168.8.203"
       private_ip     = "192.168.122.203"
