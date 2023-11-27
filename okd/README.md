@@ -1,6 +1,6 @@
 # How to create an OKD4 cluster on KVM with Terraform
 
-Here is a sample code of this article [シングルノード OpenShift (OKD4) on KVM の構築 - Qiita](https://qiita.com/sawa2d2/items/3cf9c9d5d9ce5f589124).
+Here is a sample code of this article [OpenShift (OKD4) on KVM の構築 - Qiita](https://qiita.com/sawa2d2/items/3cf9c9d5d9ce5f589124).
 
 ## Summary
 
@@ -18,169 +18,36 @@ The network configuration in this repository is as shown in the diagram below:
 
 ![Network architecture](./images/network_architecture.drawio.png)
 
+
 ## Prerequisites
 - `terraform`
-- `podman`
 - KVM Packages
   - `qemu-kvm`
   - `libvirt`
+- `systemd-resolved`
 - [`openshift-install`](https://github.com/okd-project/okd/releases)
 - [`oc`](https://github.com/okd-project/okd/releases)
 
-## Hot to use this Terraform module
-Copy [sample/main.tf](./sample/main.tf) to your project root.
+Then http://localhost:9000/ shows all the machine status (login by `admin:test`).
 
-Initialize terraform:
+## Prepare network config
+Add the following settings to `/etc/systemd/resolved.conf`:
 ```
-terraform init
-```
-
-Create a network for okd:
-```
-terraform apply -auto-approve -target=module.okd.libvirt_network.network
+[Resolve]
+DNS=192.168.126.1
+Domains=~ocp4.example.com
 ```
 
-Enable to use libvirt's DNS from the host:
-```
-sudo resolvectl dns tt0 192.168.126.1
-sudo resolvectl domain tt0 ~ocp4.example.com
-```
+Apply the setting:
+``` 
+sudo systemctl restart systemd-resolved
+``` 
 
-FYI: Check if the network is created:
+## Create ignition files
+
+(Optional) Clear existing ignition files:
 ```
-# Bridge:
-$ bridge show
-bridge name     bridge id               STP enabled     interfaces
-tt0             8000.52540076c4ca       yes
-
-# Network
-$ virsh net-list
- Name      State    Autostart   Persistent
---------------------------------------------
- okd       active   yes         yes
-
-# DNS, dnsmasq:
-$ sudo cat /etc/libvirt/qemu/networks/okd.xml
-<!--
-WARNING: THIS IS AN AUTO-GENERATED FILE. CHANGES TO IT ARE LIKELY TO BE
-OVERWRITTEN AND LOST. Changes to this xml configuration should be made using:
-  virsh net-edit okd
-or other application using the libvirt API.
--->
-
-<network xmlns:dnsmasq='http://libvirt.org/schemas/network/dnsmasq/1.0'>
-  <name>okd</name>
-  <uuid>c442bfab-8bd2-4c64-84c1-318bb9e9e423</uuid>
-  <forward mode='nat'/>
-  <bridge name='tt0' stp='on' delay='0'/>
-  <mac address='52:54:00:76:c4:ca'/>
-  <domain name='ocp4.example.com' localOnly='yes'/>
-  <dns>
-    <host ip='192.168.126.5'>
-      <hostname>api-int.ocp4.example.com</hostname>
-      <hostname>api.ocp4.example.com</hostname>
-    </host>
-  </dns>
-  <ip family='ipv4' address='192.168.126.1' prefix='24'>
-    <dhcp>
-      <range start='192.168.126.2' end='192.168.126.254'/>
-    </dhcp>
-  </ip>
-  <dnsmasq:options>
-    <dnsmasq:option value='address=/api.ocp4.example.com/192.168.126.5'/>
-    <dnsmasq:option value='address=/api-int.ocp4.example.com/192.168.126.5'/>
-    <dnsmasq:option value='address=/*.apps.ocp4.example.com/192.168.126.5'/>
-    <dnsmasq:option value='address=/master0.ocp4.example.com/192.168.126.101'/>
-    <dnsmasq:option value='address=/master1.ocp4.example.com/192.168.126.102'/>
-    <dnsmasq:option value='address=/master2.ocp4.example.com/192.168.126.103'/>
-    <dnsmasq:option value='address=/master0.ocp4.example.com/192.168.126.104'/>
-    <dnsmasq:option value='address=/worker1.ocp4.example.com/192.168.126.105'/>
-  </dnsmasq:options>
-</network>
-```
-
-## Run HAProxy container
-In advance, create the folowing network config file `tt0.conflist` in `/etc/cni/net.d`:
-
-```
-{
-  "cniVersion": "0.4.0",
-  "name": "tt0",
-  "plugins": [
-    {
-      "type": "bridge",
-      "bridge": "tt0",
-      "isGateway": true,
-      "ipMasq": true,
-      "ipam": {
-        "type": "static",
-        "addresses": [
-          {
-            "address": "192.168.126.5/24",
-            "gateway": "192.168.126.1"
-          }
-        ]
-      }
-    },
-    {
-      "type": "portmap",
-      "capabilities": {
-        "portMappings": true
-      }
-    }
-  ]
-}
-```
-
-Build and run a HAProxy container:
-
-```
-sudo podman build -t okd-haproxy -f ./haproxy.Dockerfile
-sudo podman run -it --rm --network=tt0 -p 8080:9000 -v `pwd`/haproxy.cfg:/etc/haproxy/haproxy.cfg:ro okd-haproxy /bin/bash
-```
-
-Inside a container:
-```
-/start-haproxy
-```
-
-You can see status of HAProxy via http://localhost:8080/ and login by `admin:test`.
-
-## Preparing ignition files
-Create `install-config.yaml` as below:
-
-```
----
-apiVersion: v1
-baseDomain: example.com
-compute:
-- hyperthreading: Enabled
-  name: worker
-  replicas: 0
-controlPlane:
-  hyperthreading: Enabled
-  name: master
-  replicas: 3
-metadata:
-  name: ocp4
-networking:
-  clusterNetwork:
-  - cidr: 10.128.0.0/14
-    hostPrefix: 23
-  serviceNetwork:
-  - 172.30.0.0/16
-  machineNetwork:
-  - cidr: 192.168.126.0/24
-  networkType: OVNKubernetes
-platform:
-  none: {}
-pullSecret: ''
-sshKey: '<SSH_KEY>'
-```
-
-Make a backup:
-```
-cp install-config.yaml install-config.yaml.backup
+rm -rf bootstrap.ign master.ign worker.ign .openshift_install.log .openshift_install_state.json auth/
 ```
 
 Generate ignition files:
@@ -188,33 +55,25 @@ Generate ignition files:
 cp install-config.yaml.backup install-config.yaml && openshift-install create ignition-configs
 ```
 
-## Create a bootstrap node
-Create a bootstrap node first:
+
+## Provision resources
+Copy [sample/main.tf](./sample/main.tf) to your project root.
+
+Then run:
+
 ```
-terraform apply -auto-approve -target=module.okd.module.bootstrap
+terraform init
+terraform apply -auto-approve
 ```
 
-## Create master/worker nodes
-Create master and worker nodes:
+## Run HAProxy
+Copy `./haproxy/haproxy.cfg` to `/etc/haproxy/haproxy.cfg` and run HAProxy service:
 ```
-terraform apply -auto-approve -target=module.okd.module.cluster
-```
-
-Now six VMs and one container are run on the bridge `tt0`:
-```
-$ brctl show
-bridge name     bridge id               STP enabled     interfaces
-tt0             8000.525400b3d152       yes             veth26fc05a2
-                                                        vnet0
-                                                        vnet1
-                                                        vnet2
-                                                        vnet3
-                                                        vnet4
-                                                        vnet5
+systemctl start haproxy
 ```
 
-## Waiting for an OKD cluster is build
-See the progress of installation:
+## Wait until an OKD cluster is installed
+Start monitoring installtion progress:
 ```
 openshift-install wait-for bootstrap-complete --log-level=info
 ```
@@ -224,7 +83,7 @@ For more details, execute the following in the bootstrap node:
 journalctl -u bootkube | grep bootkube.sh | tail -n 20
 ```
 
-## Destroy the bootstrap node when bootstrapping complete
+## Remove the bootstrap node after bootstrapping complete
 Destroy the bootstrap node:
 ```
 terraform destroy -auto-approve -target=module.okd.module.bootstrap
@@ -235,14 +94,13 @@ Update DNS of the network:
 terraform apply -auto-approve -target=module.okd.libvirt_network.network -var="exclude_bootstrap=true"
 ```
 
-## Cleanup
+## Publish OKD4 in your home network
 
-Destroy all the nodes and network:
+Add the two records to DNS in your home network to enable to access to external client.
 ```
-terraform destroy -auto-approve
+address=/apps.ocp4.example.com/192.168.8.10
+address=/api.ocp4.example.com/192.168.8.10
 ```
 
-Delete files generated by `openshift-instasll`:
-```
-rm -rf  bootstrap.ign master.ign worker.ign .openshift_install.log .openshift_install_state.json auth/
-```
+![Publishing services](./images/publish.drawio.png)
+

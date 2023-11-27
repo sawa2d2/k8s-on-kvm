@@ -15,12 +15,12 @@ networking:
   clusterNetwork:
   - cidr: 10.128.0.0/14
     hostPrefix: 23
+  networkType: OVNKubernetes
   serviceNetwork:
   - 172.30.0.0/16
-  machineNetwork:
-  - cidr: 192.168.126.0/24
-  networkType: OVNKubernetes
 platform:
   none: {}
 pullSecret: '{"auths":{"fake":{"auth":"aWQ6cGFzcwo="}}}'
-sshKey: 'ssh-ed25519 AAAA...'
+sshKey: |
+  ssh-rsa AAAA... user1@example.com
+  ssh-rsa AAAA... user2@example.com

@@ -22,7 +22,7 @@ module "okd" {
   gateway                    = "192.168.126.1"
   nameservers                = ["192.168.126.1"]
   use_dns_instead_of_haproxy = true
-  load_balancer_ip           = "192.168.126.5"
+  load_balancer_ip           = "192.168.8.10"
 
   # Download a CoreOS image from:
   #   $ openshift-install version

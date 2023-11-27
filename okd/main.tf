@@ -25,7 +25,7 @@ locals {
   ) : []
 
   dnsmasq_options = concat(
-    [
+    var.use_dns_instead_of_haproxy ? [] : [
       {
         option_name  = "address"
         option_value = "/api.${var.domain}/${var.load_balancer_ip}"
@@ -36,7 +36,7 @@ locals {
       },
       {
         option_name  = "address"
-        option_value = "/*.apps.${var.domain}/${var.load_balancer_ip}"
+        option_value = "/apps.${var.domain}/${var.load_balancer_ip}"
       },
     ],
     var.exclude_bootstrap ? [] : [
