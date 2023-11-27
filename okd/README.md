@@ -1,6 +1,6 @@
 # How to create an OKD4 cluster on KVM with Terraform
 
-Here is a sample code of this article [OpenShift (OKD4) on KVM の構築 - Qiita](https://qiita.com/sawa2d2/items/3cf9c9d5d9ce5f589124).
+Here is a sample code of this article [OpenShift (OKD4) on KVM - Qiita](https://qiita.com/sawa2d2/items/3cf9c9d5d9ce5f589124).
 
 ## Summary
 
