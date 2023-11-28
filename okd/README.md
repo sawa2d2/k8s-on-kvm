@@ -28,7 +28,6 @@ The network configuration in this repository is as shown in the diagram below:
 - [`openshift-install`](https://github.com/okd-project/okd/releases)
 - [`oc`](https://github.com/okd-project/okd/releases)
 
-Then http://localhost:9000/ shows all the machine status (login by `admin:test`).
 
 ## Prepare network config
 Add the following settings to `/etc/systemd/resolved.conf`:
@@ -88,6 +87,8 @@ Copy [`haproxy.cfg`](./haproxy.cfg) to `/etc/haproxy/haproxy.cfg` and start HAPr
 ```
 systemctl start haproxy
 ```
+
+Then http://localhost:9000/ shows all the machine status (login by `admin:test`).
 
 ## Enable to access to the cluster from clients on your home network
 Add the records to DNS in your home network to enable to access to external client.
