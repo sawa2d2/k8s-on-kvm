@@ -98,8 +98,7 @@ terraform apply -auto-approve -target=module.okd.libvirt_network.network -var="e
 
 Add the two records to DNS in your home network to enable to access to external client.
 ```
-address=/apps.ocp4.example.com/192.168.8.10
-address=/api.ocp4.example.com/192.168.8.10
+address=/ocp4.example.com/192.168.8.10
 ```
 
 ![Publishing services](./images/publish.drawio.png)
