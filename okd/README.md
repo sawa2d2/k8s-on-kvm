@@ -1,10 +1,10 @@
 # How to create an OKD4 cluster on KVM with Terraform
 
-Here is a sample code of this article [OpenShift (OKD4) on KVM - Qiita](https://qiita.com/sawa2d2/items/3cf9c9d5d9ce5f589124).
+This repository contains the sample code described in this article: [OpenShift (OKD4) on KVM - Qiita](https://qiita.com/sawa2d2/items/3cf9c9d5d9ce5f589124).
 
 ## Summary
 
-This docs will explain how to deploy an OKD4 cluster on KVM using Terraform according to the steps:
+This docs explains how to deploy an OKD4 cluster on KVM using Terraform according to the steps:
 
 1. Create `install-config.yaml`for OKD4 settings
 1. Generate ignition files by `openshift-install` command
@@ -56,16 +56,14 @@ cp install-config.yaml.backup install-config.yaml && openshift-install create ig
 
 
 ## Provision resources
-Copy [sample/main.tf](./sample/main.tf) to your project root.
-
-Then run:
+Copy [sample/main.tf](./sample/main.tf) to your project root and run the following commands:
 
 ```
 terraform init
 terraform apply -auto-approve
 ```
 
-Check if DNS records are appropriate:
+Check if DNS records are as follow:
 ```
 $ less /etc/libvirt/qemu/networks/okd.xml
 ...
@@ -90,10 +88,11 @@ systemctl start haproxy
 
 Then http://localhost:9000/ shows all the machine status (login by `admin:test`).
 
-## Enable to access to the cluster from clients on your home network
-Add the records to DNS in your home network to enable to access to external client.
+## Enable to access to the cluster from external clients
+Add a records to your DNS on your home network to enable to access from external clients to a cluster.
+This is an example record that a host has IP `192.168.8.10`:
 ```
-address=/ocp4.example.com/ip.of.your.host
+address=/ocp4.example.com/192.168.8.10
 ```
 
 ![Publishing services](./images/publish.drawio.png)
@@ -110,8 +109,8 @@ For more details, execute the following in the bootstrap node:
 journalctl -u bootkube | grep bootkube.sh | tail -n 20
 ```
 
-## Remove the bootstrap node after bootstrapping complete
-Destroy the bootstrap node:
+## Remove the bootstrap node
+Destroy the bootstrap node after bootstrapping complete:
 ```
 terraform destroy -auto-approve -target=module.okd.module.bootstrap
 ```
