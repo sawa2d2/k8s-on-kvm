@@ -21,8 +21,8 @@ module "okd" {
   cidr                       = "192.168.126.0/24"
   gateway                    = "192.168.126.1"
   nameservers                = ["192.168.126.1"]
-  use_dns_instead_of_haproxy = true
-  load_balancer_ip           = "192.168.8.10"
+  use_dns_instead_of_haproxy = false
+  load_balancer_ip           = "192.168.126.1"
 
   # Download a CoreOS image from:
   #   $ openshift-install version
@@ -34,7 +34,7 @@ module "okd" {
   bootstrap = {
     name          = "bootstrap"
     vcpu          = 4
-    memory        = 16384                    # in MiB
+    memory        = 12288                    # in MiB
     disk          = 100 * 1024 * 1024 * 1024 # 100 GB
     ip            = "192.168.126.100"
     ignition_file = "bootstrap.ign"
@@ -45,50 +45,75 @@ module "okd" {
     {
       name          = "master0"
       vcpu          = 4
-      memory        = 16384                    # in MiB
+      memory        = 12288                    # in MiB
       disk          = 100 * 1024 * 1024 * 1024 # 100 GB
       ip            = "192.168.126.101"
       ignition_file = "master.ign"
-      volumes       = []
+      volumes = [
+        {
+          name = "additional_disk"
+          disk = 200 * 1024 * 1024 * 1024 # 200 GB
+        }
+      ]
     },
     {
       name          = "master1"
       vcpu          = 4
-      memory        = 16384                    # in MiB
+      memory        = 12288                    # in MiB
       disk          = 100 * 1024 * 1024 * 1024 # 100 GB
       ip            = "192.168.126.102"
       ignition_file = "master.ign"
-      volumes       = []
+      volumes = [
+        {
+          name = "additional_disk"
+          disk = 200 * 1024 * 1024 * 1024 # 200 GB
+        }
+      ]
     },
     {
       name          = "master2"
       vcpu          = 4
-      memory        = 16384                    # in MiB
+      memory        = 12288                    # in MiB
       disk          = 100 * 1024 * 1024 * 1024 # 100 GB
       ip            = "192.168.126.103"
       ignition_file = "master.ign"
-      volumes       = []
+      volumes = [
+        {
+          name = "additional_disk"
+          disk = 200 * 1024 * 1024 * 1024 # 200 GB
+        }
+      ]
     },
   ]
 
   workers = [
     {
       name          = "worker0"
-      vcpu          = 2
+      vcpu          = 4
       memory        = 8192                     # in MiB
       disk          = 100 * 1024 * 1024 * 1024 # 100 GB
       ip            = "192.168.126.104"
       ignition_file = "worker.ign"
-      volumes       = []
+      volumes = [
+        {
+          name = "additional_disk"
+          disk = 200 * 1024 * 1024 * 1024 # 200 GB
+        }
+      ]
     },
     {
       name          = "worker1"
-      vcpu          = 2
+      vcpu          = 4
       memory        = 8192                     # in MiB
       disk          = 100 * 1024 * 1024 * 1024 # 100 GB
       ip            = "192.168.126.105"
       ignition_file = "worker.ign"
-      volumes       = []
+      volumes = [
+        {
+          name = "additional_disk"
+          disk = 200 * 1024 * 1024 * 1024 # 200 GB
+        }
+      ]
     },
   ]
 }

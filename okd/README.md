@@ -66,11 +66,37 @@ terraform init
 terraform apply -auto-approve
 ```
 
-## Run HAProxy
-Copy `./haproxy/haproxy.cfg` to `/etc/haproxy/haproxy.cfg` and run HAProxy service:
+Check if DNS records are appropriate:
+```
+$ less /etc/libvirt/qemu/networks/okd.xml
+...
+  <dnsmasq:options>
+    <dnsmasq:option value='address=/api.ocp4.example.com/192.168.126.1'/>
+    <dnsmasq:option value='address=/api-int.ocp4.example.com/192.168.126.1'/>
+    <dnsmasq:option value='address=/apps.ocp4.example.com/192.168.126.1'/>
+    <dnsmasq:option value='address=/bootstrap.ocp4.example.com/192.168.126.100'/>
+    <dnsmasq:option value='address=/master0.ocp4.example.com/192.168.126.101'/>
+    <dnsmasq:option value='address=/master1.ocp4.example.com/192.168.126.102'/>
+    <dnsmasq:option value='address=/master2.ocp4.example.com/192.168.126.103'/>
+    <dnsmasq:option value='address=/worker0.ocp4.example.com/192.168.126.104'/>
+    <dnsmasq:option value='address=/worker1.ocp4.example.com/192.168.126.105'/>
+  </dnsmasq:options>
+```
+
+## Start HAProxy
+Copy [`haproxy.cfg`](./haproxy.cfg) to `/etc/haproxy/haproxy.cfg` and start HAProxy service:
 ```
 systemctl start haproxy
 ```
+
+## Enable to access to the cluster from clients on your home network
+Add the records to DNS in your home network to enable to access to external client.
+```
+address=/ocp4.example.com/ip.of.your.host
+```
+
+![Publishing services](./images/publish.drawio.png)
+
 
 ## Wait until an OKD cluster is installed
 Start monitoring installtion progress:
@@ -93,13 +119,4 @@ Update DNS of the network:
 ```
 terraform apply -auto-approve -target=module.okd.libvirt_network.network -var="exclude_bootstrap=true"
 ```
-
-## Publish OKD4 in your home network
-
-Add the two records to DNS in your home network to enable to access to external client.
-```
-address=/ocp4.example.com/192.168.8.10
-```
-
-![Publishing services](./images/publish.drawio.png)
 
