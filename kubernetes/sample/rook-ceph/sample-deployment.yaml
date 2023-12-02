@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-world
+  template:
+    metadata:
+      labels:
+        app: hello-world
+    spec:
+      containers:
+      - name: hello-world-container
+        image: busybox
+        command: ["/bin/sh", "-c", "echo Hello World > /mnt/data/hello-world.txt; sleep 3600"]
+        volumeMounts:
+        - name: hello-world-volume
+          mountPath: "/mnt/data"
+      volumes:
+      - name: hello-world-volume
+        persistentVolumeClaim:
+          claimName: hello-world-pvc
