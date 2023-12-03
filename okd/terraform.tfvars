@@ -42,12 +42,7 @@ masters = [
     disk          = 100 * 1024 * 1024 * 1024 # 100 GB
     ip            = "192.168.126.101"
     ignition_file = "master.ign"
-    volumes = [
-      {
-        name = "additional_disk"
-        disk = 200 * 1024 * 1024 * 1024 # 200 GB
-      }
-    ]
+    volumes       = []
   },
   {
     name          = "master1"
@@ -56,12 +51,7 @@ masters = [
     disk          = 100 * 1024 * 1024 * 1024 # 100 GB
     ip            = "192.168.126.102"
     ignition_file = "master.ign"
-    volumes = [
-      {
-        name = "additional_disk"
-        disk = 200 * 1024 * 1024 * 1024 # 200 GB
-      }
-    ]
+    volumes       = []
   },
   {
     name          = "master2"
@@ -70,12 +60,7 @@ masters = [
     disk          = 100 * 1024 * 1024 * 1024 # 100 GB
     ip            = "192.168.126.103"
     ignition_file = "master.ign"
-    volumes = [
-      {
-        name = "additional_disk"
-        disk = 200 * 1024 * 1024 * 1024 # 200 GB
-      }
-    ]
+    volumes       = []
   },
 ]
 
