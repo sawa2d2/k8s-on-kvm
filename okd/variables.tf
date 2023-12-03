@@ -57,19 +57,14 @@ variable "domain" {
   type = string
 }
 
-variable "use_dns_instead_of_haproxy" {
-  type    = bool
-  default = false
-}
-
 variable "exclude_bootstrap" {
   type    = bool
   default = false
 }
 
 variable "load_balancer_ip" {
-  type = string
-  default = "192.168.126.1"
+  type    = string
+  default = null
 }
 
 variable "libvirt_uri" {

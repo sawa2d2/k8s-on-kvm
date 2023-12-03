@@ -1,5 +1,5 @@
 locals {
-  dns_hosts = var.use_dns_instead_of_haproxy ? concat(
+  dns_hosts = var.load_balancer_ip == null ? concat(
     [
       for vm in var.masters : {
         hostname = "api.${var.domain}"
@@ -25,7 +25,7 @@ locals {
   ) : []
 
   dnsmasq_options = concat(
-    var.use_dns_instead_of_haproxy ? [] : [
+    var.load_balancer_ip != null ? [
       {
         option_name  = "address"
         option_value = "/api.${var.domain}/${var.load_balancer_ip}"
@@ -38,7 +38,7 @@ locals {
         option_name  = "address"
         option_value = "/apps.${var.domain}/${var.load_balancer_ip}"
       },
-    ],
+    ] : [],
     var.exclude_bootstrap ? [] : [
       {
         option_name  = "address"
