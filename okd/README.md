@@ -120,3 +120,9 @@ Update DNS of the network:
 terraform apply -auto-approve -target=module.okd.libvirt_network.network -var="exclude_bootstrap=true"
 ```
 
+## Approve CSR of workers
+
+Approve all pending CSRs:
+```
+oc get csr -o go-template='{{range .items}}{{if not .status}}{{.metadata.name}}{{"\n"}}{{end}}{{end}}' | xargs --no-run-if-empty oc adm certificate approve
+```
