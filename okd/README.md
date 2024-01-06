@@ -46,7 +46,7 @@ sudo systemctl restart systemd-resolved
 
 (Optional) Clear existing ignition files:
 ```
-rm -rf bootstrap.ign master.ign worker.ign .openshift_install.log .openshift_install_state.json auth/
+rm -rf bootstrap.ign master.ign worker.ign metadata.json .openshift_install.log .openshift_install_state.json auth/
 ```
 
 Generate ignition files:
@@ -86,7 +86,7 @@ Copy [`haproxy.cfg`](./haproxy.cfg) to `/etc/haproxy/haproxy.cfg` and start HAPr
 systemctl start haproxy
 ```
 
-Then http://localhost:9000/ shows all the machine status (login by `admin:test`).
+Then http://localhost:1936/ shows all the machine status (login by `admin:test`).
 
 ## Enable to access to the cluster from external clients
 Add a records to your DNS on your home network to enable to access from external clients to a cluster.
