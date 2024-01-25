@@ -122,7 +122,6 @@ $ cp -rf .terraform/modules/kubernetes/kubernetes/inventory .
 
 Run a kubespray container and execute Ansible playbook:
 ```
-$ docker pull quay.io/kubespray/kubespray:v2.23.1
 $ docker run --rm -it \
   --mount type=bind,source="$(pwd)"/inventory,dst=/inventory \
   --mount type=bind,source="$(pwd)"/.terraform/modules/kubernetes/kubernetes/generate_inventory.py,dst=/kubespray/generate_inventory.py \
@@ -130,9 +129,10 @@ $ docker run --rm -it \
   --mount type=bind,source="$(pwd)"/.terraform/modules/kubernetes/kubernetes/cluster.yml,dst=/kubespray/cluster.yml \
   --mount type=bind,source="${HOME}"/.kube,dst=/root/.kube \
   --mount type=bind,source="${HOME}"/.ssh/id_rsa,dst=/root/.ssh/id_rsa \
-  quay.io/kubespray/kubespray:v2.23.1 bash
+  quay.io/kubespray/kubespray:v2.24.0 bash
 
 # Inside a container
+eval "$(ssh-agent -s)" && ssh-add ~/.ssh/id_rsa
 ansible-playbook -i generate_inventory.py cluster.yml
 ```
 
@@ -149,9 +149,9 @@ $ docker run --rm -it \
   --mount type=bind,source="$(pwd)"/cluster.yml,dst=/kubespray/cluster.yml \
   --mount type=bind,source="${HOME}"/.kube,dst=/root/.kube \
   --mount type=bind,source="${HOME}"/.ssh/id_rsa,dst=/root/.ssh/id_rsa \
-  quay.io/kubespray/kubespray:v2.23.1 bash
+  quay.io/kubespray/kubespray:v2.24.0 bash
 
 # Inside a container
+eval "$(ssh-agent -s)" && ssh-add ~/.ssh/id_rsa
 ansible-playbook -i /inventory/hosts.yaml cluster.yml
 ```
-
