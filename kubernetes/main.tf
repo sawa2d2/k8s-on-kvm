@@ -28,20 +28,15 @@ locals {
 resource "libvirt_cloudinit_disk" "commoninit" {
   count = length(var.vms)
   name  = "commoninit_${var.vms[count.index].name}.iso"
-  user_data = templatefile(var.vms[count.index].cloudinit_file,
-    {
-      hostname = var.vms[count.index].name
-    }
-
-  )
-  network_config = templatefile("${path.module}/network_config.cfg",
-    {
-      ip          = var.vms[count.index].public_ip
-      cidr_prefix = local.cluster_cidr_prefix
-      gateway     = var.gateway
-      nameservers = local.cluster_nameservers_string
-    }
-  )
+  user_data = templatefile(var.vms[count.index].cloudinit_file, {
+    hostname = var.vms[count.index].name
+  })
+  network_config = templatefile("${path.module}/network_config.cfg", {
+    ip          = var.vms[count.index].public_ip
+    cidr_prefix = local.cluster_cidr_prefix
+    gateway     = var.gateway
+    nameservers = local.cluster_nameservers_string
+  })
   pool = var.pool
 }
 
