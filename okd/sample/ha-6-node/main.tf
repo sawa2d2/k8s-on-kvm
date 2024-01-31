@@ -100,5 +100,19 @@ module "okd" {
         }
       ]
     },
+    {
+      name          = "worker2"
+      vcpu          = 2
+      memory        = 8192                     # in MiB
+      disk          = 100 * 1024 * 1024 * 1024 # 100 GB
+      ip            = "192.168.126.106"
+      ignition_file = "worker.ign"
+      volumes = [
+        {
+          name = "additional_disk"
+          disk = 200 * 1024 * 1024 * 1024 # 200 GB
+        }
+      ]
+    },
   ]
 }

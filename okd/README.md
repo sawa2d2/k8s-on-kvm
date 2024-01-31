@@ -30,11 +30,19 @@ The network configuration in this repository is as shown in the diagram below:
 
 
 ## Prepare network config
+
+
 Add the following settings to `/etc/systemd/resolved.conf`:
 ```
 [Resolve]
 DNS=192.168.126.1
 Domains=~ocp4.example.com
+```
+
+Configurate NetworkManager DNS overlay:
+```
+$ echo -e "[main]\ndns=dnsmasq" | sudo tee /etc/NetworkManager/conf.d/openshift.conf
+$ echo server=/ocp4.example.com/192.168.126.1 | sudo tee /etc/NetworkManager/dnsmasq.d/openshift.conf
 ```
 
 Apply the setting:
@@ -46,7 +54,7 @@ sudo systemctl restart systemd-resolved
 
 (Optional) Clear existing ignition files:
 ```
-rm -rf bootstrap.ign master.ign worker.ign metadata.json .openshift_install.log .openshift_install_state.json auth/
+rm -r bootstrap.ign master.ign worker.ign metadata.json .openshift_install.log .openshift_install_state.json auth/
 ```
 
 Generate ignition files:
@@ -54,16 +62,15 @@ Generate ignition files:
 cp install-config.yaml.backup install-config.yaml && openshift-install create ignition-configs
 ```
 
-
 ## Provision resources
-Copy [sample/main.tf](./sample/main.tf) to your project root and run the following commands:
+Copy a sample in [sample/](./sample) to your workespace and run the following:
 
 ```
 terraform init
 terraform apply -auto-approve
 ```
 
-Check if DNS records are as follow:
+Check if DNS records are like follows:
 ```
 $ less /etc/libvirt/qemu/networks/okd.xml
 ...
@@ -77,6 +84,7 @@ $ less /etc/libvirt/qemu/networks/okd.xml
     <dnsmasq:option value='address=/master2.ocp4.example.com/192.168.126.103'/>
     <dnsmasq:option value='address=/worker0.ocp4.example.com/192.168.126.104'/>
     <dnsmasq:option value='address=/worker1.ocp4.example.com/192.168.126.105'/>
+    <dnsmasq:option value='address=/worker2.ocp4.example.com/192.168.126.106'/>
   </dnsmasq:options>
 ```
 

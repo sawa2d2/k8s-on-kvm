@@ -34,7 +34,7 @@ module "okd" {
   bootstrap = {
     name          = "bootstrap"
     vcpu          = 4
-    memory        = 12288                    # in MiB
+    memory        = 16384                    # in MiB
     disk          = 100 * 1024 * 1024 * 1024 # 100 GB
     ip            = "192.168.126.100"
     ignition_file = "bootstrap.ign"
@@ -45,29 +45,44 @@ module "okd" {
     {
       name          = "master0"
       vcpu          = 4
-      memory        = 12288                    # in MiB
-      disk          = 100 * 1024 * 1024 * 1024 # 100 GB
+      memory        = 16384                    # in MiB
+      disk          = 200 * 1024 * 1024 * 1024 # 200 GB
       ip            = "192.168.126.101"
       ignition_file = "master.ign"
-      volumes       = []
+      volumes = [
+        {
+          name = "additional_disk"
+          disk = 300 * 1024 * 1024 * 1024 # 300 GB
+        }
+      ]
     },
     {
       name          = "master1"
       vcpu          = 4
-      memory        = 12288                    # in MiB
-      disk          = 100 * 1024 * 1024 * 1024 # 100 GB
+      memory        = 16384                    # in MiB
+      disk          = 200 * 1024 * 1024 * 1024 # 200 GB
       ip            = "192.168.126.102"
       ignition_file = "master.ign"
-      volumes       = []
+      volumes = [
+        {
+          name = "additional_disk"
+          disk = 300 * 1024 * 1024 * 1024 # 300 GB
+        }
+      ]
     },
     {
       name          = "master2"
       vcpu          = 4
-      memory        = 12288                    # in MiB
-      disk          = 100 * 1024 * 1024 * 1024 # 100 GB
+      memory        = 16384                    # in MiB
+      disk          = 200 * 1024 * 1024 * 1024 # 200 GB
       ip            = "192.168.126.103"
       ignition_file = "master.ign"
-      volumes       = []
+      volumes = [
+        {
+          name = "additional_disk"
+          disk = 300 * 1024 * 1024 * 1024 # 300 GB
+        }
+      ]
     },
   ]
 
