@@ -38,17 +38,21 @@ Add the following settings to `/etc/systemd/resolved.conf`:
 DNS=192.168.126.1
 Domains=~ocp4.example.com
 ```
+Apply the setting:
+```
+sudo systemctl restart systemd-resolved
+```
+
 
 Configurate NetworkManager DNS overlay:
 ```
 $ echo -e "[main]\ndns=dnsmasq" | sudo tee /etc/NetworkManager/conf.d/openshift.conf
 $ echo server=/ocp4.example.com/192.168.126.1 | sudo tee /etc/NetworkManager/dnsmasq.d/openshift.conf
 ```
-
 Apply the setting:
-``` 
-sudo systemctl restart systemd-resolved
-``` 
+```
+sudo systemctl restart NetworkManager
+```
 
 ## Create ignition files
 
@@ -89,8 +93,9 @@ $ less /etc/libvirt/qemu/networks/okd.xml
 ```
 
 ## Start HAProxy
-Copy [`haproxy.cfg`](./haproxy.cfg) to `/etc/haproxy/haproxy.cfg` and start HAProxy service:
+Copy `haproxy.cfg` to the hosts's `/etc/haproxy/haproxy.cfg` and start HAProxy service:
 ```
+systemctl enable haproxy
 systemctl start haproxy
 ```
 
