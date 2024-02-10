@@ -56,6 +56,8 @@ sudo systemctl restart NetworkManager
 
 ## Create ignition files
 
+Edit `install-config.yaml` to set `pullSecret` that is download from [Install OpenShift 4 | Pull Secret](https://console.redhat.com/openshift/install/pull-secret).
+
 (Optional) Clear existing ignition files:
 ```
 rm -r bootstrap.ign master.ign worker.ign metadata.json .openshift_install.log .openshift_install_state.json auth/
