@@ -1,5 +1,5 @@
 locals {
-  install_config_file = file("${path.module}/install-config.yaml.backup")
+  install_config_file = file("install-config.yaml.backup")
   install_config = yamldecode(local.install_config_file)
   domain = "${local.install_config["metadata"]["name"]}.${local.install_config["baseDomain"]}"
 
