@@ -53,10 +53,6 @@ variable "workers" {
   )
 }
 
-variable "domain" {
-  type = string
-}
-
 variable "exclude_bootstrap" {
   type    = bool
   default = false
