@@ -8,7 +8,6 @@
 # libvirt_uri = "qemu+ssh://<remote-user>@localhost:50000/system?keyfile=${local.user_home_directory}/.ssh/id_rsa&known_hosts_verify=ignore"
 libvirt_uri = "qemu:///system"
 
-domain           = "ocp4.example.com"
 network_name     = "okd"
 bridge_name      = "tt0"
 cidr             = "192.168.126.0/24"
