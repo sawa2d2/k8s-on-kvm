@@ -1,24 +1,28 @@
 locals {
+  install_config_file = file("${path.module}/install-config.yaml.backup")
+  install_config = yamldecode(local.install_config_file)
+  domain = "${local.install_config["metadata"]["name"]}.${local.install_config["baseDomain"]}"
+
   dns_hosts = var.load_balancer_ip == null ? concat(
     [
       for vm in var.masters : {
-        hostname = "api.${var.domain}"
+        hostname = "api.${local.domain}"
         ip       = vm.ip
       }
     ],
     [
       for vm in var.masters : {
-        "hostname" : "api-int.${var.domain}"
+        "hostname" : "api-int.${local.domain}"
         "ip" : vm.ip
       }
     ],
     var.exclude_bootstrap ? [] : [
       {
-        hostname = "api.${var.domain}"
+        hostname = "api.${local.domain}"
         ip       = var.bootstrap.ip
       },
       {
-        hostname = "api-int.${var.domain}"
+        hostname = "api-int.${local.domain}"
         ip       = var.bootstrap.ip
       },
     ],
@@ -28,33 +32,33 @@ locals {
     var.load_balancer_ip != null ? [
       {
         option_name  = "address"
-        option_value = "/api.${var.domain}/${var.load_balancer_ip}"
+        option_value = "/api.${local.domain}/${var.load_balancer_ip}"
       },
       {
         option_name  = "address"
-        option_value = "/api-int.${var.domain}/${var.load_balancer_ip}"
+        option_value = "/api-int.${local.domain}/${var.load_balancer_ip}"
       },
       {
         option_name  = "address"
-        option_value = "/apps.${var.domain}/${var.load_balancer_ip}"
+        option_value = "/apps.${local.domain}/${var.load_balancer_ip}"
       },
     ] : [],
     var.exclude_bootstrap ? [] : [
       {
         option_name  = "address"
-        option_value = "/bootstrap.${var.domain}/${var.bootstrap.ip}"
+        option_value = "/bootstrap.${local.domain}/${var.bootstrap.ip}"
       },
     ],
     [
       for vm in var.masters : {
         option_name  = "address",
-        option_value = "/${vm.name}.${var.domain}/${vm.ip}"
+        option_value = "/${vm.name}.${local.domain}/${vm.ip}"
       }
     ],
     [
       for vm in var.workers : {
         option_name  = "address"
-        option_value = "/${vm.name}.${var.domain}/${vm.ip}"
+        option_value = "/${vm.name}.${local.domain}/${vm.ip}"
       }
     ],
   )
@@ -63,7 +67,7 @@ locals {
 resource "libvirt_network" "network" {
   name      = var.network_name
   mode      = "nat"
-  domain    = var.domain
+  domain    = local.domain
   bridge    = var.bridge_name
   addresses = [var.cidr]
   autostart = true
