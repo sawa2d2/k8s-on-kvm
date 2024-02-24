@@ -7,13 +7,13 @@ hosts:
   - hostname: master0
     interfaces:
       - name: ens3
-        macAddress: 00:ef:44:21:e6:a5 
+        macAddress: 00:ef:44:21:e6:a6
     networkConfig:
       interfaces:
         - name: ens3
           type: ethernet
           state: up
-          mac-address: 00:ef:44:21:e6:a5
+          mac-address: 00:ef:44:21:e6:a6
           ipv4:
             enabled: true
             address:
