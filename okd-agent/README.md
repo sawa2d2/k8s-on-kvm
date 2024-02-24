@@ -37,7 +37,11 @@ Create an iso image:
 ```
 cp install-config.backup.yaml install-config.yaml
 cp agent-config.backup.yaml agent-config.yaml
+```
+
+```
 openshift-install agent create image
+mv ./agent.x86_64.iso /home/images
 ```
 
 ## Provision resources
