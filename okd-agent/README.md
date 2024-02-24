@@ -12,7 +12,7 @@ This docs explains how to deploy an OKD4 cluster on KVM using Terraform accordin
 
 The figure below represent the installation flow:
 
-![Agent based installation](./images/agent-based-installation.png)
+![Agent based installation](./images/agent-based-installation.drawio.png)
 
 
 ## Prerequisites
