@@ -52,24 +52,6 @@ terraform init
 terraform apply -auto-approve
 ```
 
-Check if DNS records are like follows:
-```
-$ less /etc/libvirt/qemu/networks/okd.xml
-...
-  <dnsmasq:options>
-    <dnsmasq:option value='address=/api.ocp4.example.com/192.168.126.1'/>
-    <dnsmasq:option value='address=/api-int.ocp4.example.com/192.168.126.1'/>
-    <dnsmasq:option value='address=/apps.ocp4.example.com/192.168.126.1'/>
-    <dnsmasq:option value='address=/bootstrap.ocp4.example.com/192.168.126.100'/>
-    <dnsmasq:option value='address=/master0.ocp4.example.com/192.168.126.101'/>
-    <dnsmasq:option value='address=/master1.ocp4.example.com/192.168.126.102'/>
-    <dnsmasq:option value='address=/master2.ocp4.example.com/192.168.126.103'/>
-    <dnsmasq:option value='address=/worker0.ocp4.example.com/192.168.126.104'/>
-    <dnsmasq:option value='address=/worker1.ocp4.example.com/192.168.126.105'/>
-    <dnsmasq:option value='address=/worker2.ocp4.example.com/192.168.126.106'/>
-  </dnsmasq:options>
-```
-
 ## Start HAProxy
 Copy `haproxy.cfg` to the hosts's `/etc/haproxy/haproxy.cfg` and start HAProxy service:
 ```
@@ -85,9 +67,6 @@ This is an example record that a host has IP `192.168.8.10`:
 ```
 address=/ocp4.example.com/192.168.8.10
 ```
-
-![Publishing services](./images/publish.drawio.png)
-
 
 ## Wait until an OKD cluster is installed
 Start monitoring installtion progress:
