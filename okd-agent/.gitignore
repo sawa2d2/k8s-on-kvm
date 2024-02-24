@@ -1,0 +1,7 @@
+# OKD
+auth/
+manifests/
+.openshift_install_state.json
+agent-config.yaml.backup
+install-config.yaml.backup
+!terraform.tfvars
