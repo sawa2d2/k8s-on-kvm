@@ -8,46 +8,17 @@ terraform {
 }
 
 provider "libvirt" {
-  uri = "qemu:///system"
+  uri = var.libvirt_uri
 }
 
 locals {
-  install_config_file = file("install-config.yaml.backup")
+  install_config_file = file("install-config.backup.yaml")
   install_config      = yamldecode(local.install_config_file)
   domain              = "${local.install_config["metadata"]["name"]}.${local.install_config["baseDomain"]}"
 
-  agent_config_file = file("agent-config.yaml.backup")
+  agent_config_file = file("agent-config.backup.yaml")
   agent_config      = yamldecode(local.agent_config_file)
   vms               = local.agent_config["hosts"]
-
-  #dnsmasq_options = concat(
-  #  var.load_balancer_ip != null ? [
-  #    {
-  #      option_name  = "address"
-  #      option_value = "/api.${local.domain}/${var.load_balancer_ip}"
-  #    },
-  #    {
-  #      option_name  = "address"
-  #      option_value = "/api-int.${local.domain}/${var.load_balancer_ip}"
-  #    },
-  #    {
-  #      option_name  = "address"
-  #      option_value = "/apps.${local.domain}/${var.load_balancer_ip}"
-  #    },
-  #  ] : [],
-  #  [
-  #    for vm in var.masters : {
-  #      option_name  = "address",
-  #      option_value = "/${vm.name}.${local.domain}/${vm.ip}"
-  #    }
-  #  ],
-  #  [
-  #    for vm in var.workers : {
-  #      option_name  = "address"
-  #      option_value = "/${vm.name}.${local.domain}/${vm.ip}"
-  #    }
-  #  ],
-  #)
 }
 
 resource "libvirt_domain" "vm" {
