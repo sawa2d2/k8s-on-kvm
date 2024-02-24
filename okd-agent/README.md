@@ -71,24 +71,9 @@ address=/ocp4.example.com/192.168.8.10
 ## Wait until an OKD cluster is installed
 Start monitoring installtion progress:
 ```
-openshift-install wait-for bootstrap-complete --log-level=info
+openshift-install  agent wait-for install-complete --log-level=debug
 ```
 
-For more details, execute the following in the bootstrap node:
-```
-journalctl -u bootkube | grep bootkube.sh | tail -n 20
-```
-
-## Remove the bootstrap node
-Destroy the bootstrap node after bootstrapping complete:
-```
-terraform destroy -auto-approve -target=module.okd.module.bootstrap
-```
-
-Update DNS of the network:
-```
-terraform apply -auto-approve -target=module.okd.libvirt_network.network -var="exclude_bootstrap=true"
-```
 
 ## Approve CSR of workers
 
