@@ -4,10 +4,12 @@ metadata:
   name: sno
 rendezvousIP: 192.168.8.80
 hosts:
-  - hostname: master0
+  - hostname: master0.sno.example.com
     interfaces:
       - name: ens3
         macAddress: 00:ef:44:21:e6:a6
+    rootDeviceHints:
+      deviceName: "/dev/sda"
     networkConfig:
       interfaces:
         - name: ens3
