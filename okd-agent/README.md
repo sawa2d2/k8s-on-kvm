@@ -33,11 +33,13 @@ rm -r .openshift_install.log .openshift_install_state.json
 
 Edit `install-config.yaml` to set `pullSecret` that is download from [Install OpenShift 4 | Pull Secret](https://console.redhat.com/openshift/install/pull-secret).
 
-Create an iso image:
+Create `install-config.yaml` and `agent-config.yaml` from backup files:
 ```
 cp install-config.backup.yaml install-config.yaml
 cp agent-config.backup.yaml agent-config.yaml
 ```
+
+Create an iso image:
 
 ```
 openshift-install agent create image
