@@ -41,7 +41,7 @@ cp agent-config.backup.yaml agent-config.yaml
 
 ```
 openshift-install agent create image
-mv ./agent.x86_64.iso /home/images
+cp ./agent.x86_64.iso /home/images
 ```
 
 ## Provision resources
