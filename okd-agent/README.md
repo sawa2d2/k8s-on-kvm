@@ -28,7 +28,7 @@ The figure below represent the installation flow:
 ## Create an iso image
 (Optional) Clear existing ignition files:
 ```
-rm -r metadata.json .openshift_install.log .openshift_install_state.json auth/
+rm -r .openshift_install.log .openshift_install_state.json auth/
 ```
 
 Edit `install-config.yaml` to set `pullSecret` that is download from [Install OpenShift 4 | Pull Secret](https://console.redhat.com/openshift/install/pull-secret).
