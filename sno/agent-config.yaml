@@ -1,0 +1,35 @@
+apiVersion: v1alpha1
+kind: AgentConfig
+metadata:
+  name: sno
+rendezvousIP: 192.168.8.80
+hosts:
+  - hostname: master0
+    interfaces:
+      - name: ens3
+        macAddress: 00:ef:44:21:e6:a6
+    rootDeviceHints:
+      deviceName: "/dev/vda"
+    networkConfig:
+      interfaces:
+        - name: ens3
+          type: ethernet
+          state: up
+          mac-address: 00:ef:44:21:e6:a6
+          ipv4:
+            enabled: true
+            address:
+              - ip: 192.168.8.80
+                prefix-length: 24 
+            dhcp: false
+      dns-resolver:
+        config:
+          server:
+            - 192.168.8.1
+      routes:
+        config:
+          - destination: 0.0.0.0/0
+            next-hop-address: 192.168.8.1 
+            next-hop-interface: ens3
+            table-id: 254
+
