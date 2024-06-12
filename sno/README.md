@@ -1,6 +1,6 @@
 # How to create an OKD4 cluster on KVM with Terraform
 
-Here is a sample code of this article [Terraform で KVM 上に Single Node OpenShift/OKD (SNO) を構築する #kubernetes - Qiita](https://qiita.com/sawa2d2/items/45eda993ccd1c54e6fcd)
+Here is a sample code of this article [Terraform で KVM 上に Single Node OpenShift/OKD (SNO) を構築する - Qiita](https://qiita.com/sawa2d2/items/45eda993ccd1c54e6fcd)
 
 ## Summary
 This docs explains how to deploy an OKD4 cluster on KVM using Terraform according to the steps:
