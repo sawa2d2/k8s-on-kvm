@@ -55,5 +55,5 @@ terraform apply -auto-approve
 Monitor the installtion progress:
 ```
 export KUBECONFIG=`pwd`/ocp/auth/kubeconfig
-openshift-install  agent wait-for install-complete --log-level=debug
+openshift-install --dir ocp/ agent wait-for install-complete
 ```

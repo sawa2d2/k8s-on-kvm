@@ -11,19 +11,8 @@ provider "libvirt" {
   uri = "qemu:///system"
 }
 
-locals {
-  install_config_file = file("install-config.yaml")
-  install_config      = yamldecode(local.install_config_file)
-  domain              = "${local.install_config["metadata"]["name"]}.${local.install_config["baseDomain"]}"
-
-  agent_config_file = file("agent-config.yaml")
-  agent_config      = yamldecode(local.agent_config_file)
-  vms               = local.agent_config["hosts"]
-}
-
 resource "libvirt_domain" "vm" {
-  count  = length(local.vms)
-  name   = local.vms[count.index].hostname
+  name   = "maseter0"
   vcpu   = 8
   memory = 16384
 
@@ -43,8 +32,8 @@ resource "libvirt_domain" "vm" {
 
   network_interface {
     bridge    = "br0"
-    addresses = [local.vms[count.index].networkConfig.interfaces[0].ipv4.address[0].ip]
-    mac       = local.vms[count.index].interfaces[0].macAddress
+    addresses = ["192.168.8.80"]
+    mac       = "52:54:00:00:00:50"
   }
 
   cpu {

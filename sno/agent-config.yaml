@@ -7,7 +7,7 @@ hosts:
   - hostname: master0
     interfaces:
       - name: ens3
-        macAddress: 00:ef:44:21:e6:a6
+        macAddress: 52:54:00:00:00:50
     rootDeviceHints:
       deviceName: "/dev/vda"
     networkConfig:
@@ -15,7 +15,7 @@ hosts:
         - name: ens3
           type: ethernet
           state: up
-          mac-address: 00:ef:44:21:e6:a6
+          mac-address: 52:54:00:00:00:50
           ipv4:
             enabled: true
             address:
