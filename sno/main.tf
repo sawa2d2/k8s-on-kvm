@@ -12,7 +12,7 @@ provider "libvirt" {
 }
 
 resource "libvirt_domain" "vm" {
-  name   = "maseter0"
+  name   = "master0"
   vcpu   = 8
   memory = 16384
 
