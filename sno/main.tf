@@ -25,6 +25,10 @@ resource "libvirt_domain" "vm" {
   }
 
   disk {
+    volume_id = libvirt_volume.system.id
+  }
+
+  disk {
     volume_id = libvirt_volume.volume.id
   }
 
@@ -46,10 +50,17 @@ resource "libvirt_domain" "vm" {
   }
 }
 
-resource "libvirt_volume" "volume" {
-  name   = "sno.qcow2"
+resource "libvirt_volume" "system" {
+  name   = "sno_system.qcow2"
   pool   = "default"
   format = "qcow2"
-  size   = 500 * 1024 * 1024 * 1024
+  size   = 512 * 1024 * 1024 * 1024
+}
+
+resource "libvirt_volume" "volume" {
+  name   = "sno_volume.qcow2"
+  pool   = "default"
+  format = "qcow2"
+  size   = 1024 * 1024 * 1024 * 1024
 }
 
