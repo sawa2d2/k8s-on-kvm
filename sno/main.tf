@@ -14,7 +14,7 @@ provider "libvirt" {
 resource "libvirt_domain" "vm" {
   name   = "master0"
   vcpu   = 16
-  memory = 32768
+  memory = 65536
 
   boot_device {
     dev = ["hd", "cdrom"]
