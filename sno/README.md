@@ -19,15 +19,32 @@ The figure below represent the installation flow:
 - KVM Packages
   - `qemu-kvm`
   - `libvirt`
-- [`openshift-install`](https://github.com/okd-project/okd/releases)
+
+## Install an OKD client and installer
+
 - [`oc`](https://github.com/okd-project/okd/releases)
+- [`openshift-install`](https://github.com/okd-project/okd/releases)
+
+Install `oc`:
+```
+$ tar -xvf ./openshift-client-linux-amd64-rhel9-4.17.0-okd-scos.0.tar.gz
+$ mv oc /usr/local/bin/
+$ oc version
+```
+
+Install `openshift-install`:
+```
+$ tar -xvf ./openshift-install-linux-4.17.0-okd-scos.0.tar.gz
+$ mv openshift-install /usr/local/bin/
+$ openshift-install version
+```
 
 ## Building an Agent iso image
 Edit `install-config.yaml` to set `pullSecret` downloadable from [Install OpenShift 4 | Pull Secret](https://console.redhat.com/openshift/install/pull-secret).
 
 Create a builder container:
 ```
-$ export OKD_VERSION=4.15.0-0.okd-2024-03-10-010116
+$ export OKD_VERSION=4.17.0-okd-scos.0
 $ docker image build ./ -t openshift-install --build-arg VERSION=${OKD_VERSION}
 $ docker container run -it --rm openshift-install version
 ```
@@ -46,7 +63,7 @@ docker run --privileged --rm \
 sudo cp ./ocp/agent.x86_64.iso /var/lib/libvirt/images/
 ```
 
-## Provision resources
+## Provisioning resources
 Use the following commands:
 ```
 terraform init
@@ -57,5 +74,5 @@ terraform apply -auto-approve
 Monitor the installtion progress:
 ```
 export KUBECONFIG=`pwd`/ocp/auth/kubeconfig
-openshift-install --dir ocp/ agent wait-for install-complete
+openshift-install --dir ocp/ wait-for install-complete
 ```
