@@ -19,32 +19,15 @@ The figure below represent the installation flow:
 - KVM Packages
   - `qemu-kvm`
   - `libvirt`
-
-## Install an OKD client and installer
-
 - [`oc`](https://github.com/okd-project/okd/releases)
 - [`openshift-install`](https://github.com/okd-project/okd/releases)
-
-Install `oc`:
-```
-$ tar -xvf ./openshift-client-linux-amd64-rhel9-4.17.0-okd-scos.0.tar.gz
-$ mv oc /usr/local/bin/
-$ oc version
-```
-
-Install `openshift-install`:
-```
-$ tar -xvf ./openshift-install-linux-4.17.0-okd-scos.0.tar.gz
-$ mv openshift-install /usr/local/bin/
-$ openshift-install version
-```
 
 ## Building an Agent iso image
 Edit `install-config.yaml` to set `pullSecret` downloadable from [Install OpenShift 4 | Pull Secret](https://console.redhat.com/openshift/install/pull-secret).
 
 Create a builder container:
 ```
-$ export OKD_VERSION=4.17.0-okd-scos.0
+$ export OKD_VERSION=4.15.0-0.okd-2024-03-10-010116
 $ docker image build ./ -t openshift-install --build-arg VERSION=${OKD_VERSION}
 $ docker container run -it --rm openshift-install version
 ```
