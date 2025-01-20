@@ -19,8 +19,8 @@ The figure below represent the installation flow:
 - KVM Packages
   - `qemu-kvm`
   - `libvirt`
-- [`openshift-install`](https://github.com/okd-project/okd/releases)
 - [`oc`](https://github.com/okd-project/okd/releases)
+- [`openshift-install`](https://github.com/okd-project/okd/releases)
 
 ## Building an Agent iso image
 Edit `install-config.yaml` to set `pullSecret` downloadable from [Install OpenShift 4 | Pull Secret](https://console.redhat.com/openshift/install/pull-secret).
@@ -46,7 +46,7 @@ docker run --privileged --rm \
 sudo cp ./ocp/agent.x86_64.iso /var/lib/libvirt/images/
 ```
 
-## Provision resources
+## Provisioning resources
 Use the following commands:
 ```
 terraform init
@@ -57,5 +57,5 @@ terraform apply -auto-approve
 Monitor the installtion progress:
 ```
 export KUBECONFIG=`pwd`/ocp/auth/kubeconfig
-openshift-install --dir ocp/ agent wait-for install-complete
+openshift-install --dir ocp/ wait-for install-complete
 ```

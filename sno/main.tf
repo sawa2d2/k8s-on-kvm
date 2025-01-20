@@ -2,7 +2,7 @@ terraform {
   required_providers {
     libvirt = {
       source  = "dmacvicar/libvirt"
-      version = "0.7.1"
+      version = "0.8.1"
     }
   }
 }
@@ -15,6 +15,7 @@ resource "libvirt_domain" "vm" {
   name   = "master0"
   vcpu   = 16
   memory = 65536
+  machine = "q35"
 
   boot_device {
     dev = ["hd", "cdrom"]
@@ -47,6 +48,10 @@ resource "libvirt_domain" "vm" {
   graphics {
     type        = "vnc"
     listen_type = "address"
+  }
+
+  xml {
+    xslt = file("${path.module}/patch.xsl")
   }
 }
 
