@@ -12,7 +12,7 @@ ENV VERSION=${VERSION}
 # Download binary
 RUN microdnf install tar gzip -y 
 RUN curl -L https://github.com/okd-project/okd/releases/download/${VERSION}/openshift-install-linux-${VERSION}.tar.gz -o openshift-install-linux.tar.gz
-RUN curl -L https://github.com/okd-project/okd/releases/download/${VERSION}/openshift-client-linux-${VERSION}.tar.gz -o openshift-client-linux.tar.gz
+RUN curl -L https://github.com/okd-project/okd/releases/download/${VERSION}/openshift-client-linux-amd64-rhel9-${VERSION}.tar.gz -o openshift-client-linux.tar.gz
 RUN tar xzf openshift-install-linux.tar.gz
 RUN tar xzf openshift-client-linux.tar.gz
 
