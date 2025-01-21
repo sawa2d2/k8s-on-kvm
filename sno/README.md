@@ -61,6 +61,13 @@ openshift-install --dir ocp/ wait-for install-complete
 ```
 
 ## (Informative) Take an initial snapshot
+Take an initial snapshot by executing the following command:
 ```
 virsh snapshot-create-as --domain master0 --name init
 ```
+
+To apply the initial snapshot to the VM, run:
+```
+virsh snapshot-revert master0 init
+```
+
