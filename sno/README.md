@@ -66,6 +66,14 @@ Take an initial snapshot by executing the following command:
 virsh snapshot-create-as --domain master0 --name init
 ```
 
+Check if the snapshot `init` has been created:
+```
+# virsh snapshot-list master0
+ Name   Creation Time               State
+ ---------------------------------------------
+  init   2025-01-21 23:54:51 +0900   running
+```
+
 To apply the initial snapshot to the VM, run:
 ```
 virsh snapshot-revert master0 init
