@@ -11,12 +11,12 @@ provider "libvirt" {
   # Localhost:
   #   libvirt_uri = "qemu:///system"
   # Remote:
-  #   libvirt_uri = "qemu+ssh://<user>@<remote-host>/system?keyfile=${local.user_home_directory}/.ssh/id_rsa&known_hosts_verify=ignore"
+  #   libvirt_uri = "qemu+ssh://<user>@<remote-host>/system?keyfile=${pathexpand("~")}/.ssh/id_rsa&known_hosts_verify=ignore"
   # Remote via bastion:
   #   Forward port in advance:
   #     $ ssh -C -N -f -L 50000:<remote-user>@<remote-host>:22 <bastion-host> -p <bastion-port>
-  #   libvirt_uri = "qemu+ssh://<remote-user>@localhost:50000/system?keyfile=${local.user_home_directory}/.ssh/id_rsa&known_hosts_verify=ignore"
-  uri = "qemu:///system"
+  #   libvirt_uri = "qemu+ssh://<remote-user>@localhost:50000/system?keyfile=${pathexpand("~")}/.ssh/id_rsa&known_hosts_verify=ignore"
+  libvirt_uri = "qemu:///system"
 }
 
 resource "libvirt_domain" "vm" {
