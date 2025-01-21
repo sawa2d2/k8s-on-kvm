@@ -8,7 +8,7 @@
     </xsl:copy>
   </xsl:template>
 
-  <!-- Use SATA CD-ROM for Linux setup for UEFI compatibility -->
+  <!-- Use SATA CD-ROM for Linux setup -->
   <xsl:template match="target[@bus='ide']">
     <xsl:copy>
       <xsl:apply-templates select="@*[name()!='bus']"/>

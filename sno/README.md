@@ -58,4 +58,8 @@ Monitor the installtion progress:
 ```
 export KUBECONFIG=`pwd`/ocp/auth/kubeconfig
 openshift-install --dir ocp/ wait-for install-complete
+
+## (Informative) Take an initial snapshot
+```
+virsh snapshot-create-as --domain master0 -- name init
 ```
